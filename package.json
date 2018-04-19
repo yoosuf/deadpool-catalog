@@ -7,9 +7,13 @@
     "nodemon": "nodemon -w ./src ./bin/www -e js,jsx,json"
   },
   "dependencies": {
+    "@godaddy/terminus": "^2.2.0",
     "body-parser": "~1.18.2",
+    "compression": "^1.7.2",
+    "cors": "^2.8.4",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "is-express-schema-valid": "^1.0.2",
     "morgan": "~1.9.0"
   }
 }
