@@ -1,11 +1,12 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var cors = require('cors');
+import express from "express";
+import path from "path";
+import logger from "morgan";
+import bodyParser from "body-parser";
+import cors from "cors";
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+
+import index from "./routes/index";
+import users from "./routes/users";
 
 var app = express();
 

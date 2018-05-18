@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "nodemon": "nodemon -w ./src ./bin/www -e js,jsx,json"
+    "start": "nodemon ./src/bin/www --exec babel-node --presets env,stage-2",
+    "build": "rimraf build/ && babel ./src --out-dir build/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "nodemon": "nodemon -w ./src ./build/bin/www -e js,jsx,json"
   },
   "dependencies": {
     "@godaddy/terminus": "^2.2.0",
-    "body-parser": "~1.18.2",
+    "body-parser": "^1.18.3",
     "bookshelf": "^0.13.3",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
@@ -18,5 +19,13 @@
     "knex": "^0.13.0",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "nodemon": "^1.17.4",
+    "npm-run-all": "^4.1.3",
+    "rimraf": "^2.6.2"
   }
 }
