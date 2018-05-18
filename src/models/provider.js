@@ -1,4 +1,4 @@
-var bookshelf = require('./../bookshelf');
+import bookshelf from "./../bookshelf";
 
 var Provider = bookshelf.Model.extend({
     // ...
