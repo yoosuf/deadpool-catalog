@@ -4,27 +4,29 @@ const secret       = 'lWMKf43m0Jo2YrxMgjUznODLYVEo9hejheKxvtIaYw2peDirJh7o2Fd6E8
 const KrakenClient = require('kraken-api');
 const kraken       = new KrakenClient(key, secret);
 
-function getCadBuyPrice(callback) {  
+function getCadBuySellPrice(callback) {  
+
   (async () => {
     // Display user's balance
     // console.log(await kraken.api('Balance'));
- 
+
     // Get Ticker Info
-    await kraken.api('Ticker', { pair : 'XXBTZCAD' }, function(error, result) {
-      // console.log(result);
-      return callback(result);
+    await kraken.api('Ticker', { pair : 'XXBTZCAD' }, function(error, data) {
+      console.log(data);
+
+      var buy_data = {
+        "base": "BTC",
+        "currency": "CAD",
+        "amount": data.result.XXBTZCAD.a[0]
+        }
+      var sell_data = {
+        "base": "BTC",
+        "currency": "CAD",
+        "amount": data.result.XXBTZCAD.b[0]
+        }
+
+      return callback({"data": {"buy" : buy_data, "sell":sell_data}});
     })})();
 }
 
-function getCadSellPrice(callback) {  
-  (async () => {
-    // Display user's balance
-    // console.log(await kraken.api('Balance'));
- 
-    // Get Ticker Info
-    console.log(await kraken.api('Ticker', { pair : 'XXBTZCAD' }));
-  })();
-}
-
-module.exports.getCadBuyPrice = getCadBuyPrice; 
-module.exports.getCadSellPrice = getCadSellPrice;
+module.exports.getCadBuySellPrice = getCadBuySellPrice; 

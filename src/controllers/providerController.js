@@ -46,7 +46,7 @@ exports.coinbase_sell_cad = function(req, res) {
     })                 
 };
 
-exports.coinbase_Buy_sell_cad = function(req, res) {
+exports.coinbase_buy_sell_cad = function(req, res) {
     coinbase.getCadBuySellPrice(function(response){
         // Here you have access to your variable
         console.log(response);
@@ -55,16 +55,8 @@ exports.coinbase_Buy_sell_cad = function(req, res) {
 };
 
 //Kraken
-exports.kraken_buy_cad = function(req, res) {
-    kraken.getCadBuyPrice(function(response){
-        // Here you have access to your variable
-        console.log(response);
-        res.send(response);
-    })                 
-};
-
-exports.kraken_sell_cad = function(req, res) {
-    kraken.getCadSellPrice(function(response){
+exports.kraken_buy_sell_cad = function(req, res) {
+    kraken.getCadBuySellPrice(function(response){
         // Here you have access to your variable
         console.log(response);
         res.send(response);
