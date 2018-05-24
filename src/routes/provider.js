@@ -5,10 +5,15 @@ var router = express.Router();
 // var provider_controller = require('../controllers/providerController');
 import provider_controller from "../controllers/providerController";
 
+router.get('/coinbase/gbp', provider_controller.coinbase_buy_sell_gbp);
 router.get('/coinbase/gbp/buy', provider_controller.coinbase_buy_gbp);
 router.get('/coinbase/gbp/sell', provider_controller.coinbase_sell_gbp);
+router.get('/coinbase/cad', provider_controller.coinbase_Buy_sell_cad);
 router.get('/coinbase/cad/buy', provider_controller.coinbase_buy_cad);
 router.get('/coinbase/cad/sell', provider_controller.coinbase_sell_cad);
+
+router.get('/kraken/cad/buy', provider_controller.kraken_buy_cad);
+router.get('/kraken/cad/sell', provider_controller.kraken_sell_cad);
 
 /// PROVIDER ROUTES ///
 
