@@ -1,8 +1,11 @@
 var Provider = require('../models/provider');
 var coinbase = require('../providers/coinbase');
+var kraken = require('../providers/kraken');
 // import coinbase from "../providers/coinbase";
 
 // Display list of all Providers.
+
+//Coinbase
 exports.coinbase_buy_gbp = function(req, res) {
     coinbase.getGbpBuyPrice(function(response){
         // Here you have access to your variable
@@ -19,6 +22,14 @@ exports.coinbase_sell_gbp = function(req, res) {
     })                 
 };
 
+exports.coinbase_buy_sell_gbp = function(req, res) {
+    coinbase.getGbpBuySellPrice(function(response){
+        // Here you have access to your variable
+        console.log(response);
+        res.send(response);
+    })                 
+};
+
 exports.coinbase_buy_cad = function(req, res) {
     coinbase.getCadBuyPrice(function(response){
         // Here you have access to your variable
@@ -29,6 +40,31 @@ exports.coinbase_buy_cad = function(req, res) {
 
 exports.coinbase_sell_cad = function(req, res) {
     coinbase.getCadSellPrice(function(response){
+        // Here you have access to your variable
+        console.log(response);
+        res.send(response);
+    })                 
+};
+
+exports.coinbase_Buy_sell_cad = function(req, res) {
+    coinbase.getCadBuySellPrice(function(response){
+        // Here you have access to your variable
+        console.log(response);
+        res.send(response);
+    })                 
+};
+
+//Kraken
+exports.kraken_buy_cad = function(req, res) {
+    kraken.getCadBuyPrice(function(response){
+        // Here you have access to your variable
+        console.log(response);
+        res.send(response);
+    })                 
+};
+
+exports.kraken_sell_cad = function(req, res) {
+    kraken.getCadSellPrice(function(response){
         // Here you have access to your variable
         console.log(response);
         res.send(response);
