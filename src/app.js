@@ -9,6 +9,7 @@ import Schema from './graphql';
 import index from "./routes/index";
 import users from "./routes/users";
 import provider from "./routes/provider";
+import calculate from "./routes/calculate";
 
 var app = express();
 
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
 app.use('/users', users);
 app.use('/provider', provider);  // Add provider routes to middleware chain.
+app.use('/calculate', calculate);
 
 app.use('/graphql', GraphHTTP((request) => ({
   schema: Schema,
