@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./src/bin/www --exec babel-node --presets env,stage-2",
-    "build": "rimraf build/ && babel ./src --out-dir build/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "build": "rimraf build/ && babel src  --compile src --out-dir build/ --copy-files",
     "serve": "node ./build/bin/www",
     "test": "mocha --compilers js:babel-register"
   },
@@ -26,8 +26,10 @@
     "kraken-api": "^1.0.0"
   },
   "devDependencies": {
+    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "mocha": "^5.2.0",
