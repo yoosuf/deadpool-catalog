@@ -19,7 +19,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
-    "google-currency": "^1.0.7",
+    "google-currency": "git+https://github.com/yoosuf/google-currency.git",
     "graphql": "^0.13.2",
     "is-express-schema-valid": "^1.0.2",
     "knex": "^0.13.0",
