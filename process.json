@@ -1,0 +1,24 @@
+{
+    "apps": [
+        {
+            "name": "DEADPOOL-CATALOG",
+            "script": "build/bin/www"
+        }
+    ],
+    "deploy": {
+        "production": {
+            "key": "/key/welltech-dev.pem",
+            "user": "welltech",
+            "host": [
+                "159.65.137.150"
+            ],
+            "ref": "origin/node-dev",
+            "repo": "git@github.com:yoosuf/deadpool-catalog.git",
+            "path": "/opt/projects/deadpool-catalog",
+            "post-deploy": "npm install",
+            "env": {
+                "NODE_ENV": "production"
+            }
+        }
+    }
+}
