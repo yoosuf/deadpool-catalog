@@ -23,11 +23,9 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-$app->withFacades();
+// $app->withFacades();
 
-$app->withEloquent();
-
-$app->configure('cors');
+// $app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -61,15 +59,13 @@ $app->singleton(
 |
 */
 
-$app->middleware([
-    \Barryvdh\Cors\HandleCors::class,
+// $app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
-]);
+// ]);
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
 // ]);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -81,9 +77,8 @@ $app->middleware([
 | totally optional, so you are not required to uncomment this line.
 |
 */
-$app->register(Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class);
-$app->register(Barryvdh\Cors\ServiceProvider::class);
-$app->register(App\Providers\AppServiceProvider::class);
+
+// $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
