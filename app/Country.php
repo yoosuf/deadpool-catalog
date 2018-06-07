@@ -16,6 +16,7 @@ class Country extends Model
         'nice_name',
         'iso',
         'iso3',
-        'phonecode',
+        'phonecode'
     ];
+
 }
