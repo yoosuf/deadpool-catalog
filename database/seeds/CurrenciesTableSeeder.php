@@ -13,7 +13,7 @@ class CurrenciesTableSeeder extends Seeder
      */
     public function run()
     {
-        $json = File::get("/../resources/jsondata/currencies.json");
+        $json = File::get("/../storage/data/currencies.json");
         $data = json_decode($json);
         //$array1 = $data->toArray();
         foreach ($data as $obj) {

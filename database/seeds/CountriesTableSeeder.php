@@ -13,7 +13,7 @@ class CountriesTableSeeder extends Seeder
      */
     public function run()
     {
-        $json = File::get("/../resources/jsondata/countries.json");
+        $json = File::get("/../storage/data/countries.json");
         $data = json_decode($json);
         //$array1 = $data->toArray();
         foreach ($data as $obj) {

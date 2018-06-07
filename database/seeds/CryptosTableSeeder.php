@@ -13,7 +13,7 @@ class CryptosTableSeeder extends Seeder
      */
     public function run()
     {
-        $json = File::get("/../resources/jsondata/cryptos.json");
+        $json = File::get("/../storage/data/cryptos.json");
         $data = json_decode($json);
         //$array1 = $data->toArray();
         foreach ($data as $obj) {
