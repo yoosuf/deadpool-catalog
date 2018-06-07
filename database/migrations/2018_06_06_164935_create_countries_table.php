@@ -19,8 +19,8 @@ class CreateCountriesTable extends Migration
             $table->string('nice_name', 45);
             $table->string('iso', 45);
             $table->string('iso3', 45);
-            $table->string('phonecode', 15);
-            $table->string('preferance', 45);
+            $table->string('phone_code', 15);
+            $table->string('preference', 45);
             $table->timestamps();
         });
     }

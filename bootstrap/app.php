@@ -23,9 +23,9 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-// $app->withFacades();
+$app->withFacades();
 
-// $app->withEloquent();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +81,17 @@ $app->singleton(
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+$app->configure('graphql');
+
+
+$app->register(Folklore\GraphQL\LumenServiceProvider::class);
+
+
+
+
+// class_alias(\Folklore\GraphQL\Support\Facades\GraphQL::class, 'GraphQL');
+
 
 /*
 |--------------------------------------------------------------------------
