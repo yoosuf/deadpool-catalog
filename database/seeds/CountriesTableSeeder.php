@@ -26,7 +26,7 @@ class CountriesTableSeeder extends Seeder
                 'nice_name' => $obj['nice_name'],
                 'iso' => $obj['iso'],
                 'iso3' => $obj['iso3'],
-                'phonecode' => $obj['phonecode']
+                'phone_code' => $obj['phonecode']
             ]);
 
         }

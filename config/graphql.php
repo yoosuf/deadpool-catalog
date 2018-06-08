@@ -124,6 +124,8 @@ return [
     'schemas' => [
         'default' => [
             'query' => [
+                'countries' => 'App\GraphQL\Query\CountryQuery',
+                'currencies' => 'App\GraphQL\Query\CurrencyQuery'
 
             ],
             'mutation' => [
@@ -181,7 +183,9 @@ return [
      * ]
      */
     'types' => [
-        'Country' => App\GraphQL\Type\CountryType::class
+        'CountryType' => App\GraphQL\Type\CountryType::class,
+        'CurrencyType' => App\GraphQL\Type\CurrencyType::class,
+
     ],
 
     /*
