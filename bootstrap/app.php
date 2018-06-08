@@ -88,11 +88,6 @@ $app->configure('graphql');
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 
 
-
-
- class_alias(\Folklore\GraphQL\Support\Facades\GraphQL::class, 'GraphQL');
-
-
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

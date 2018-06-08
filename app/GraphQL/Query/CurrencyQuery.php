@@ -2,30 +2,29 @@
 
 namespace App\GraphQL\Query;
 
-use App\Country;
+use App\Currency;
 use Folklore\GraphQL\Support\Query;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL;
 
-class CountryQuery extends Query
+class CurrencyQuery extends Query
 {
     protected $attributes = [
-        'name' => 'CountryType',
+        'name' => 'CurrencyQuery',
         'description' => 'A query'
     ];
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('CountryType'));
-
+        return Type::listOf(GraphQL::type('CurrencyType'));
     }
 
     public function args()
     {
         return [
             'id' => ['name' => 'id', 'type' => Type::string()],
-            'nice_name' => ['name' => 'nice_name', 'type' => Type::string()],
+            'name' => ['name' => 'name', 'type' => Type::string()],
             'iso3' => ['name' => 'iso3', 'type' => Type::string()]
         ];
     }
@@ -33,13 +32,13 @@ class CountryQuery extends Query
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
         if (isset($args['id'])) {
-            return Country::where('id' , $args['id'])->get();
-        } else if(isset($args['nice_name'])) {
-            return Country::where('nice_name', $args['nice_name'])->get();
+            return Currency::where('id' , $args['id'])->get();
+        } else if(isset($args['name'])) {
+            return Currency::where('name', $args['name'])->get();
         } else if(isset($args['iso3'])) {
-            return Country::where('iso3', $args['iso3'])->get();
+            return Currency::where('iso3', $args['iso3'])->get();
         }else {
-            return Country::all();
+            return Currency::all();
         }
     }
 }
