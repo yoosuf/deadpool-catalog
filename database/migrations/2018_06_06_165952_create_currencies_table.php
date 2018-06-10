@@ -19,7 +19,7 @@ class CreateCurrenciesTable extends Migration
             $table->string('iso', 45);
             $table->string('iso3', 45);
             $table->string('symbol', 5);
-            $table->string('preferance', 45);
+            $table->string('preferance', 45)->nullable();
             $table->timestamps();
         });
     }
