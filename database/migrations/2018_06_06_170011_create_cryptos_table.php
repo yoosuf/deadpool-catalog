@@ -19,7 +19,7 @@ class CreateCryptosTable extends Migration
             $table->string('code', 45);
             $table->string('symbol', 45);
             $table->boolean('is_active');
-            $table->string('preferance', 45)->nullable();
+            $table->jsonb('preference')->default("{}");
             $table->timestamps();
         });
     }

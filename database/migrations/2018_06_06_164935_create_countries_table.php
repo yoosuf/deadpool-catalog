@@ -20,7 +20,7 @@ class CreateCountriesTable extends Migration
             $table->string('iso', 45);
             $table->string('iso3', 45);
             $table->string('phone_code', 15);
-            $table->string('preference', 45)->nullable();
+            $table->jsonb('preference')->default("{}");
             $table->timestamps();
         });
     }
