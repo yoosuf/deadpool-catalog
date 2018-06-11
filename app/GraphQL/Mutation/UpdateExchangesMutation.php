@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutation;
 
+use App\Exchange;
 use Folklore\GraphQL\Support\Mutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -16,18 +17,37 @@ class UpdateExchangesMutation extends Mutation
 
     public function type()
     {
-        return Type::listOf(Type::string());
+        return Type::listOf(GraphQL::type('ExchangeType'));
+    }
+
+    public function rules()
+    {
+        return [
+            'name' => 'required|unique:exchanges',
+            'description' => 'required',
+        ];
     }
 
     public function args()
     {
         return [
-            
+            'id' => ['name' => 'id', 'type' => Type::int()],
+            'name' => ['name' => 'name', 'type' => Type::string()],
+            'description' => ['name' => 'description', 'type' => Type::string()]
         ];
     }
 
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
-        return [];
+        $exchanges = Exchange::find($args['id']);
+        if(!$exchanges)
+        {
+            return null;
+        }
+
+        $fields = $args;
+        $exchanges->update($fields);
+        return $exchanges;
+
     }
 }
