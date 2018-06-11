@@ -128,11 +128,12 @@ return [
                 'currencies' => 'App\GraphQL\Query\CurrencyQuery',
                 'cryptos' => 'App\GraphQL\Query\CryptoQuery',
                 'exchanges' => 'App\GraphQL\Query\ExchangesQuery',
-                'exchange' => 'App\GraphQL\Query\ExchangeQuery'
+                'exchange' => 'App\GraphQL\Query\ExchangeQuery',
 
             ],
             'mutation' => [
-                'createExchange' => App\GraphQL\Mutation\CreateExchangesMutation::class
+                'createExchange' => App\GraphQL\Mutation\Exchange\CreateExchangesMutation::class,
+                'updateExchange' => App\GraphQL\Mutation\Exchange\UpdateExchangesMutation::class,
             ]
         ]
     ],

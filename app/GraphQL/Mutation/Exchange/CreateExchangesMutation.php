@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Mutation;
+namespace App\GraphQL\Mutation\Exchange;
 
 use App\Exchange;
 use Folklore\GraphQL\Support\Mutation;

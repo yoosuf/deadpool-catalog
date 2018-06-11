@@ -1,16 +1,16 @@
 <?php
 
-namespace App\GraphQL\Mutation;
+namespace App\GraphQL\Mutation\Exchange;
 
 use Folklore\GraphQL\Support\Mutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL;
 
-class AssociateExchangesMutation extends Mutation
+class UpdateExchangesMutation extends Mutation
 {
     protected $attributes = [
-        'name' => 'AssociateExchangesMutation',
+        'name' => 'UpdateExchangesMutation',
         'description' => 'A mutation'
     ];
 
