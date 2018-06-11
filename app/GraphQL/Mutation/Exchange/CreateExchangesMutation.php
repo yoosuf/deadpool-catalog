@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Mutation;
+namespace App\GraphQL\Mutation\Exchange;
 
 use App\Exchange;
 use Folklore\GraphQL\Support\Mutation;
@@ -8,16 +8,16 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL;
 
-class UpdateExchangesMutation extends Mutation
+class CreateExchangesMutation extends Mutation
 {
     protected $attributes = [
-        'name' => 'UpdateExchangesMutation',
+        'name' => 'createExchange',
         'description' => 'A mutation'
     ];
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('ExchangeType'));
+        return Type::listOf(GraphQL::type('Exchange'));
     }
 
     public function rules()
@@ -31,7 +31,6 @@ class UpdateExchangesMutation extends Mutation
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
             'description' => ['name' => 'description', 'type' => Type::string()]
         ];
@@ -39,15 +38,12 @@ class UpdateExchangesMutation extends Mutation
 
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
-        $exchanges = Exchange::find($args['id']);
-        if(!$exchanges)
-        {
-            return null;
-        }
-
-        $fields = $args;
-        $exchanges->update($fields);
-        return $exchanges;
-
+        $data = [
+            'name' => $args['name'],
+            'description' => $args['description']
+            
+        ];
+        $newData = Exchange::create($data);
+        return $newData;
     }
 }
