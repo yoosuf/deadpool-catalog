@@ -6,10 +6,10 @@ use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Type as BaseType;
 use GraphQL;
 
-class CountryType extends BaseType
+class CryptoType extends BaseType
 {
     protected $attributes = [
-        'name' => 'CountryType',
+        'name' => 'CryptoType',
         'description' => 'A type'
     ];
 
@@ -18,31 +18,27 @@ class CountryType extends BaseType
         return [
             'id' => [
                 'type' => Type::nonNull(Type::string()),
-                'description' => 'The id of the country'
+                'description' => 'The id of the Crypto'
             ],
             'name' => [
                 'type' => Type::string(),
-                'description' => 'The name of country'
+                'description' => 'The name of Crypto'
             ],
-            'nice_name' => [
+            'code' => [
                 'type' => Type::string(),
-                'description' => 'The nice_name of country'
+                'description' => 'The code of Crypto'
             ],
-            'iso' => [
+            'symbol' => [
                 'type' => Type::string(),
-                'description' => 'The iso of country'
+                'description' => 'The symbol of Crypto'
             ],
-            'iso3' => [
+            'is_active' => [
                 'type' => Type::string(),
-                'description' => 'The iso3 of country'
-            ],
-            'phone_code' => [
-                'type' => Type::string(),
-                'description' => 'The phone_code of country'
+                'description' => 'The is_active of Crypto'
             ],
             'preference' => [
                 'type' => Type::string(),
-                'description' => 'The preference of country'
+                'description' => 'The preference of Crypto'
             ]
         ];
     }

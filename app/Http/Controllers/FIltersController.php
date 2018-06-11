@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers;
+
+//use App\User;
+use App\Http\Controllers\Controller;
+
+class FIltersController extends Controller
+{
+    /**
+     * Show the profile for the given user.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function getCurrencies()
+    {
+        return response()->json([
+            'name' => 'Abigail',
+            'state' => 'CA'
+        ]);
+    }
+}
