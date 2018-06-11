@@ -17,7 +17,7 @@ class CreateExchangesMutation extends Mutation
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('Exchange'));
+        return Type::listOf(GraphQL::type('ExchangeType'));
     }
 
     public function rules()
