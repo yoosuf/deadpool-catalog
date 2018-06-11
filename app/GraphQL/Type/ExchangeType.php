@@ -9,7 +9,7 @@ use GraphQL;
 class ExchangeType extends BaseType
 {
     protected $attributes = [
-        'name' => 'Exchange',
+        'name' => 'ExchangeType',
         'description' => 'A type'
     ];
 
