@@ -11,10 +11,5 @@ class Crypto extends Model
      *
      * @var string
      */
-    protected $fillable = [
-        'name',
-        'code',
-        'symbol',
-        'is_active'
-    ];
+    protected $guarded = [];
 }

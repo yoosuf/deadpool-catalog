@@ -132,7 +132,7 @@ return [
 
             ],
             'mutation' => [
-                'createExchangeMutation' => App\GraphQL\Mutation\CreateExchangesMutation::class
+                'createExchange' => App\GraphQL\Mutation\CreateExchangesMutation::class
             ]
         ]
     ],

@@ -11,9 +11,12 @@ class Exchange extends Model
      *
      * @var string
      */
-    protected $fillable = [
-        'name',
-        'description'
-    ];
+    protected $guarded = [];
+
+
+    public function countries()
+    {
+        return $this->hasMany(Country::class);
+    }
 
 }

@@ -9,7 +9,7 @@ use GraphQL;
 class ExchangeType extends BaseType
 {
     protected $attributes = [
-        'name' => 'ExchangeType',
+        'name' => 'Exchange',
         'description' => 'A type'
     ];
 
@@ -31,10 +31,6 @@ class ExchangeType extends BaseType
             'is_active' => [
                 'type' => Type::string(),
                 'description' => 'The is_active of exchange'
-            ],
-            'preference' => [
-                'type' => Type::string(),
-                'description' => 'The preference of exchange'
             ]
         ];
     }
