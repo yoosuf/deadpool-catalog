@@ -59,9 +59,10 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
+$app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
-// ]);
+    Spatie\Cors\Cors::class,
+]);
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
@@ -83,9 +84,11 @@ $app->singleton(
 // $app->register(App\Providers\EventServiceProvider::class);
 
 $app->configure('graphql');
+$app->configure('cors');
 
 
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
+$app->register(Spatie\Cors\CorsServiceProvider::class);
 
 
 /*

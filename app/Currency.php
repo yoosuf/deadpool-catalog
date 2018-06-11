@@ -11,10 +11,13 @@ class Currency extends Model
      *
      * @var string
      */
-    protected $fillable = [
-        'name',
-        'iso',
-        'iso3',
-        'symbol'
-    ];
+    protected $guarded = [];
+
+
+
+    public function countries()
+    {
+        return $this->belongsToMany(Country::class);
+    }
+
 }

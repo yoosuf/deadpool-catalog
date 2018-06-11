@@ -11,13 +11,13 @@ use GraphQL;
 class CreateExchangesMutation extends Mutation
 {
     protected $attributes = [
-        'name' => 'createExchangeMutation',
+        'name' => 'createExchange',
         'description' => 'A mutation'
     ];
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('ExchangeType'));
+        return Type::listOf(GraphQL::type('Exchange'));
     }
 
     public function rules()
