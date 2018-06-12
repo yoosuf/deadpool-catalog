@@ -48,6 +48,10 @@ class CountryType extends BaseType
                 'type' => Type::listOf(GraphQL::type('ExchangeType')),
                 'description' => 'The relation details'
             ],
+            'currencies' => [
+                'type' => Type::listOf(GraphQL::type('CurrencyType')),
+                'description' => 'The relation details'
+            ],
         ];
     }
 }
