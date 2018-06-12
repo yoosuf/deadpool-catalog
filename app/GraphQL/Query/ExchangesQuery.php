@@ -23,7 +23,7 @@ class ExchangesQuery extends Query
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::string()],
+            'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
             'description' => ['name' => 'description', 'type' => Type::string()],
         ];

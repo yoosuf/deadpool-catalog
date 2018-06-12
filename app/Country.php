@@ -15,7 +15,7 @@ class Country extends Model
 
     public function currencies()
     {
-        return $this->hasMany(Currency::class);
+        return $this->belongsToMany(Currency::class);
     }
 
 

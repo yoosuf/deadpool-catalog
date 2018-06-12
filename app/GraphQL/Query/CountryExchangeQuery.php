@@ -1,39 +1,37 @@
 <?php
 
-namespace App\GraphQL\Mutation;
+namespace App\GraphQL\Query;
 
 use App\Country;
-use Folklore\GraphQL\Support\Mutation;
+use App\Exchange;
+use Folklore\GraphQL\Support\Query;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL;
 
-class AssociateCountryExchangeMutation extends Mutation
+class CountryExchangeQuery extends Query
 {
     protected $attributes = [
-        'name' => 'AssociateCountryExchangeMutation',
-        'description' => 'A mutation'
+        'name' => 'CountryExchangeQuery',
+        'description' => 'A query'
     ];
 
     public function type()
     {
         return Type::listOf(GraphQL::type('CountryExchangeType'));
+
     }
 
     public function args()
     {
         return [
             'country_id' => ['name' => 'country_id', 'type' => Type::int()],
-            'exchange_id' => ['name' => 'exchange_id', 'type' => Type::int()]
+            'exchange_id' => ['name' => 'exchange_id', 'type' => Type::int()],
         ];
     }
 
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
-        $country = Country::find($args['country_id']);
-
-    
-         $country->exchanges()->sync($args['exchange_id']);
-         return $country;
+        return [];
     }
 }
