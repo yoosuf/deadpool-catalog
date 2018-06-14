@@ -19,4 +19,9 @@ class Exchange extends Model
         return $this->hasMany(Country::class);
     }
 
+    public function exchangeData()
+    {
+        return $this->hasMany(ExchangeData::class);
+    }
+
 }
