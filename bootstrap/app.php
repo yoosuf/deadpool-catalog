@@ -27,6 +27,14 @@ $app->withFacades();
 
 $app->withEloquent();
 
+// Register the facade
+$app->withFacades(true, [
+    Swap\Laravel\Facades\Swap::class => 'Swap'
+]);
+$app->withFacades(true, [
+    \Torann\Currency\Facades\Currency::class => 'Currency'
+]);
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -85,6 +93,17 @@ $app->middleware([
 
 $app->configure('graphql');
 $app->configure('cors');
+
+
+// Load the configuration
+$app->configure('swap');
+$app->configure('currency');
+
+// Register the service provider
+$app->register(Swap\Laravel\SwapServiceProvider::class);
+$app->register(\Torann\Currency\CurrencyServiceProvider::class);
+
+
 
 
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);

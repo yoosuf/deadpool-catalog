@@ -16,3 +16,7 @@ $router->get('/', function () use ($router) {
 });
 
 Route::get('currencies', 'FIltersController@getCurrencies');
+
+Route::get('calculate', 'FIltersController@calculateData');
+
+

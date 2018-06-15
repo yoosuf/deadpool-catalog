@@ -17,7 +17,7 @@ class CurrencyType extends BaseType
     {
         return [
             'id' => [
-                'type' => Type::nonNull(Type::string()),
+                'type' => Type::nonNull(Type::int()),
                 'description' => 'The id of the Currency'
             ],
             'name' => [
@@ -39,7 +39,11 @@ class CurrencyType extends BaseType
             'preference' => [
                 'type' => Type::string(),
                 'description' => 'The preference of Currency'
-            ]
+            ],
+            'countries' => [
+                'type' => Type::listOf(GraphQL::type('CountryType')),
+                'description' => 'The relation details'
+            ],
         ];
     }
 }

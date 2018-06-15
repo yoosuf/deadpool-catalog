@@ -24,7 +24,7 @@ class CountryQuery extends Query
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::string()],
+            'id' => ['name' => 'id', 'type' => Type::int()],
             'nice_name' => ['name' => 'nice_name', 'type' => Type::string()],
             'iso3' => ['name' => 'iso3', 'type' => Type::string()]
         ];

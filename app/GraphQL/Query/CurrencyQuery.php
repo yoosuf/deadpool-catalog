@@ -23,7 +23,7 @@ class CurrencyQuery extends Query
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::string()],
+            'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
             'iso3' => ['name' => 'iso3', 'type' => Type::string()]
         ];

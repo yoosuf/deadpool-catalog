@@ -129,11 +129,19 @@ return [
                 'cryptos' => 'App\GraphQL\Query\CryptoQuery',
                 'exchanges' => 'App\GraphQL\Query\ExchangesQuery',
                 'exchange' => 'App\GraphQL\Query\ExchangeQuery',
+                'countryExchanges' => 'App\GraphQL\Query\CountryExchangeQuery',
+                'countryCurrencies' => 'App\GraphQL\Query\CountryCurrencyQuery',
+                'exchangesData' => 'App\GraphQL\Query\ExchangeDataQuery',
+                
 
             ],
             'mutation' => [
                 'createExchange' => App\GraphQL\Mutation\Exchange\CreateExchangesMutation::class,
                 'updateExchange' => App\GraphQL\Mutation\Exchange\UpdateExchangesMutation::class,
+                'syncCountryExchange' => App\GraphQL\Mutation\AssociateCountryExchangeMutation::class,
+                'syncCountryCurrency' => App\GraphQL\Mutation\AssociateCountryCurrencyMutation::class,
+                
+                
             ]
         ]
     ],
@@ -191,6 +199,11 @@ return [
         'CurrencyType' => App\GraphQL\Type\CurrencyType::class,
         'CryptoType' => App\GraphQL\Type\CryptoType::class,
         'ExchangeType' => App\GraphQL\Type\ExchangeType::class,
+        'ExchangeDataType' => App\GraphQL\Type\ExchangeDataType::class,
+        'CountryExchangeType' => App\GraphQL\Type\CountryExchangeType::class,
+        'CountryCurrencyType' => App\GraphQL\Type\CountryCurrencyType::class,
+
+        
 
     ],
 

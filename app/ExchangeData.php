@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Country extends Model
+class ExchangeData extends Model
 {
     /**
      * The table associated with the model.
@@ -13,14 +13,9 @@ class Country extends Model
      */
     protected $guarded = [];
 
-    public function currencies()
-    {
-        return $this->belongsToMany(Currency::class);
-    }
-
-
     public function exchanges()
     {
-        return $this->belongsToMany(Exchange::class);
+        return $this->belongsTo(Exchange::class);
     }
+
 }

@@ -17,7 +17,7 @@ class ExchangeType extends BaseType
     {
         return [
             'id' => [
-                'type' => Type::nonNull(Type::string()),
+                'type' => Type::nonNull(Type::int()),
                 'description' => 'The id of the exchange'
             ],
             'name' => [
@@ -31,7 +31,11 @@ class ExchangeType extends BaseType
             'is_active' => [
                 'type' => Type::string(),
                 'description' => 'The is_active of exchange'
-            ]
+            ],
+            'countries' => [
+                'type' => Type::listOf(GraphQL::type('CountryType')),
+                'description' => 'The relation details'
+            ],
         ];
     }
 }
