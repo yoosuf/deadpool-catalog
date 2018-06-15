@@ -31,9 +31,7 @@ $app->withEloquent();
 $app->withFacades(true, [
     Swap\Laravel\Facades\Swap::class => 'Swap'
 ]);
-$app->withFacades(true, [
-    \Torann\Currency\Facades\Currency::class => 'Currency'
-]);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -97,12 +95,9 @@ $app->configure('cors');
 
 // Load the configuration
 $app->configure('swap');
-$app->configure('currency');
 
 // Register the service provider
 $app->register(Swap\Laravel\SwapServiceProvider::class);
-$app->register(\Torann\Currency\CurrencyServiceProvider::class);
-
 
 
 

@@ -13,7 +13,6 @@
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/message": "^1.6",
         "spatie/laravel-cors": "^1.2",
-        "torann/currency": "^1.0",
         "vlucas/phpdotenv": "~2.2"
     },
     "require-dev": {
