@@ -45,7 +45,7 @@ class FIltersController extends Controller
 
         $fromExchangeSql = DB::table('exchange_data')->get();
 
-        $toExchangeSql = DB::table('exchange_data')->get();
+        $toExchangeSql = $fromExchangeSql;
 
         
         
