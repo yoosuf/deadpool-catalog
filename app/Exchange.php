@@ -16,7 +16,7 @@ class Exchange extends Model
 
     public function countries()
     {
-        return $this->hasMany(Country::class);
+        return $this->belongsToMany(Country::class);
     }
 
     public function exchangeData()
