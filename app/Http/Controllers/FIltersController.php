@@ -41,86 +41,127 @@ class FIltersController extends Controller
         $amount = $request->get('amount');
         $fromCurrency = $request->get('buy_currency');
         $toCurrency = $request->get('sell_currency');
-    
+        
 
-        $exchangeSql = DB::table('exchange_data')->where('exchange_id', '=', 1)->first();
+        $fromExchangeSql = DB::table('exchange_data')->get();
 
-        $exchangeArr = json_decode($exchangeSql->preference);
+        $toExchangeSql = DB::table('exchange_data')->get();
 
+        
+        
         $buyPrice = 0;
         $sellPrice = 0;
 
-        $jsonArr = array();
+        $finalBuyArr = array();
+        $finalSellArr = array();
+        $finalArr = array();
 
-        foreach ($exchangeArr as $key => $value) 
+
+        foreach ($fromExchangeSql as $key => $value)
         {
-            if($key == $fromCurrency){
+            $buyArr = array();
+            $exchangeArr = json_decode($value->preference);
 
-                $buyPrice = $value->buydata->amount;
-                $jsonArr['buy'] = $value->buydata;
+            //print_r($exchangeArr);
+
+
+           // $buyArr['name'] = $exchangeArr->name;
+
+            foreach ($exchangeArr->rates as $key => $value) 
+            {
+
+                if($key == $fromCurrency){
+
+                    $buyPrice = $value->buydata;
+
+                    $buyArr['price'] = $value->buydata;
+                    $buyArr['base'] = $value->base;
+                    $buyArr['currency'] = $value->currency;
+                    $buyArr['name'] = $exchangeArr->name;
+
+                }
+                
+            }
+
+            $finalBuyArr[] = $buyArr;
+
+        }
+
+       
+
+        foreach ($toExchangeSql as $key => $value)
+        {
+            $sellArr = array();
+            $exchangeArr = json_decode($value->preference);
+
+            //$sellArr['name'] = $exchangeArr->name;
+
+            foreach ($exchangeArr->rates as $key => $value) 
+            {
+
+                if($key == $toCurrency)
+                {
+                    $sellPrice = $value->selldata;
+                    
+                    $sellArr['price'] = $value->selldata;
+                    $sellArr['base'] = $value->base;
+                    $sellArr['currency'] = $value->currency;
+                    $sellArr['name'] = $exchangeArr->name;
+
+                }
+
+                
 
             }
-            if($key == $toCurrency){
 
-                $sellPrice = $value->selldata->amount;
-                $jsonArr['sell'] = $value->selldata;
+            $finalSellArr[] = $sellArr;
 
+        }
+
+        for ($i=0; $i < count($finalBuyArr) ; $i++) { 
+            
+            for ($x=0; $x < count($finalSellArr) ; $x++) { 
+            
+                 //echo $finalBuyArr[$i]['price'].'-----'.$finalSellArr[$x]['price']. PHP_EOL;
+                $val = (floatval($amount) / floatval($finalBuyArr[$i]['price'])) * floatval($finalSellArr[$x]['price']);
+
+                
+                $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
+                $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
+
+                $client = new Client();
+                $res = $client->get($url);
+        
+                $obj = json_decode($res->getBody());
+
+                $convertedVal = $obj->result;
+                $calculatedVal = $convertedVal - $amount;
+                $percentage =  ($calculatedVal/$amount)*100;
+
+                $finalArr[] = array(
+                    'buy' => $finalBuyArr[$i],
+                    'sell' => $finalSellArr[$x],
+                    'profit' => number_format((float)$percentage, 2, '.', '')
+
+                );
             }
         }
 
-      //  print_r($jsonArr);
+        uasort($finalArr, function($a, $b){
+           // print_r($b);
+            return strcmp($a['profit'], $b['profit']);
+        });
 
-        //print('buy-price-'.$buyPrice);
-        //print('sell-price-'.$sellPrice);
-       
-
-        if($buyPrice != 0 && $sellPrice != 0){
-       
-        $val = (floatval($amount) / floatval($buyPrice)) * floatval($sellPrice);
-
-
-        $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
-        $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
-
-
-
-        $client = new Client();
-        $res = $client->get($url);
-      
-        $obj = json_decode($res->getBody());
-
-        $convertedVal = $obj->result;
-
-        $calculatedVal = $convertedVal - $amount;
-
-        $percentage =  ($calculatedVal/$amount)*100;
-
-        
-        $jsonArr['exchange'] = 'Coinbase';
-        $jsonArr['profit'] = number_format((float)$calculatedVal, 2, '.', '');
-        $jsonArr['percentage'] = number_format((float)$percentage, 2, '.', '');
+        //print_r($finalArr);
 
 
         return response()->json([
-            'data' => $jsonArr,
-            'from' => $fromCurrency,
-            'to' => $toCurrency
+                'data' => $finalArr,
+                // 'from' => $fromCurrency,
+                // 'to' => $toCurrency
         ]);
-
-        //print_r($jsonArr);
-        } else {
-
-            return response()->json([
-                'data' => [],
-                'error' => 'bad api request',
-            ]);
-
-        }
-
-        
-        
-        
+                
     }
 
-    
+   
 }

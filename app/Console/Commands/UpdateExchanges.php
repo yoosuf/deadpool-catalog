@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use DB;
 use App\Coinbase;
 use App\ExchangeData;
+use ccxt\ccxt;
 
 class UpdateExchanges extends Command
 {
@@ -40,54 +41,82 @@ class UpdateExchanges extends Command
      */
     public function handle()
     {
-        $client = Coinbase::config();
+    
+        $coinbase    = new \ccxt\coinbase (array (
+            'apiKey' => '7ZwQTSfbA8MNHa9F',
+            'secret' => 'yswMi2RFI8dAFfPH563VafVDAXpu0ScS',
+        ));
+
+        $kraken    = new \ccxt\kraken (array (
+            'apiKey' => 'j6MZpI3Xi6qiJGf4IPX2Jlnv2zGin0LL/QbpuXIT6fmjuVlp4qk2QuuA',
+            'secret' => 'lWMKf43m0Jo2YrxMgjUznODLYVEo9hejheKxvtIaYw2peDirJh7o2Fd6E8Pg98Otmz+PZSkJzildHSPzOv93dg==',
+        ));
 
         $currencies = ['USD', 'CAD', 'GBP'];
 
-        foreach ($currencies as $key => $value) 
+        $exchangesArr = DB::table('exchanges')->pluck('name', 'id');
+
+        $coinbase->markets['BTC/CAD'] = array ( 'id' => 'btc-cad', 'symbol' => 'BTC/CAD', 'base' => 'BTC', 'quote' => 'CAD');
+        $coinbase->markets['BTC/GBP'] = array ( 'id' => 'btc-gbp', 'symbol' => 'BTC/GBP', 'base' => 'BTC', 'quote' => 'GBP');
+
+    
+    // $exchangeArr = [
+
+    //         [
+    //             'id'=>1,
+    //             'name'=> 'Coinbase'
+    //         ],
+    //         [
+    //             'id'=>2,
+    //             'name'=> 'Kraken'
+    //         ]
+    // ];
+
+        foreach ($exchangesArr as $id => $val)
         {
-            $buyPrice = $client->getBuyPrice('BTC-'.$value);
-            $buyPrice = $client->decodeLastResponse();
-
-            $sellPrice = $client->getSellPrice('BTC-'.$value);
-            $sellPrice = $client->decodeLastResponse();
-
-            $exchanges[$value] = array(
-                'buydata' => $buyPrice['data'],
-                'selldata' => $sellPrice['data']    
-            );
-        }
-
-        $exchangesfinal = array(
-
-            'id' => 1,
-            'name' => 'coinbase',
-            'rates' => $exchanges
-        );
-
-
-        $encodeExchanges = json_encode($exchanges);
-
-        // $data = [
-        //     'exchange_id' => 1,
-        //     'preference' => $encodeExchanges
+            $exchanges = [];
+            foreach ($currencies as $key => $value) 
+            {
             
-        // ];
+                if($val == 'Coinbase')
+                {
 
-        DB::table('exchange_data')->insert(
-            ['exchange_id' => 1, 'preference' => $encodeExchanges]
-        );
-        //print_r(ExchangeData);exit;
+                    $coinbaseResult = $coinbase->fetch_ticker ('BTC/'.$value);
+                    $buyPrice = $coinbaseResult['info']['buy']['data']['amount'];
+                    $sellPrice = $coinbaseResult['info']['sell']['data']['amount'];
 
-        //$newData = ExchangeData::create($data);
+                }
 
-       
+                if($val == 'Kraken')
+                {
+                    $krakenResult = $kraken->fetch_ticker ('BTC/'.$value);
+                    $buyPrice = $krakenResult['info']['a'][0];
+                    $sellPrice = $krakenResult['info']['b'][0];
+
+                }
+
+
+                $exchanges[$value] = array(
+                    'base' => 'BTC',
+                    'currency' => $value,
+                    'buydata' => $buyPrice,
+                    'selldata' => $sellPrice   
+                );
+            }
 
         
+            $exchangesfinal = array(
 
-       
-           
-          // print_r($sellPrice);
-       
+                'name' => $val,
+                'rates' => $exchanges
+            );
+            $encodeExchanges = json_encode($exchangesfinal);
+
+            
+            DB::table('exchange_data')->insert(
+                ['exchange_id' => $id,'preference' => $encodeExchanges]
+            );
+
+        }
     }
 }
