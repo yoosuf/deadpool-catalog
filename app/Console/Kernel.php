@@ -26,6 +26,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('UpdateExchanges:updateExchanges')
-        ->hourly();
+        ->everyFiveMinutes();
     }
 }

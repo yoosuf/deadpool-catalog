@@ -41,6 +41,10 @@ class ProcessExchanges extends Job
         $gdax = new \ccxt\gdax ();
         $coinfloor = new \ccxt\coinfloor (); 
         $quadrigacx = new \ccxt\quadrigacx ();
+        $acx = new \ccxt\acx();
+
+        // coinspot key = 2b06e54a0ccfc425665e731b57d25d6b
+        // secret = RW0W17A9BFWMGFQQFQBUM7YAKWC7D6V767P8NHCTWAWV3RA9MPPF6NBPYE9F2P44E7PTGEL1AE4B12JAY
 
 
         // $res = $quadrigacx->fetch_ticker('BTC/USD');
