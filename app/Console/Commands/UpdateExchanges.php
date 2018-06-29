@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
-use App\Coinbase;
-use App\ExchangeData;
-use ccxt\ccxt;
+use App\Jobs\ProcessExchanges;
+use Log;
 
 class UpdateExchanges extends Command
 {
@@ -41,82 +39,13 @@ class UpdateExchanges extends Command
      */
     public function handle()
     {
-    
-        $coinbase    = new \ccxt\coinbase (array (
-            'apiKey' => '7ZwQTSfbA8MNHa9F',
-            'secret' => 'yswMi2RFI8dAFfPH563VafVDAXpu0ScS',
-        ));
+        Log::info("ProcessExchanges Queues Begins");
 
-        $kraken    = new \ccxt\kraken (array (
-            'apiKey' => 'j6MZpI3Xi6qiJGf4IPX2Jlnv2zGin0LL/QbpuXIT6fmjuVlp4qk2QuuA',
-            'secret' => 'lWMKf43m0Jo2YrxMgjUznODLYVEo9hejheKxvtIaYw2peDirJh7o2Fd6E8Pg98Otmz+PZSkJzildHSPzOv93dg==',
-        ));
+        //ProcessExchanges::dispatch();
 
-        $currencies = ['USD', 'CAD', 'GBP'];
-
-        $exchangesArr = DB::table('exchanges')->pluck('name', 'id');
-
-        $coinbase->markets['BTC/CAD'] = array ( 'id' => 'btc-cad', 'symbol' => 'BTC/CAD', 'base' => 'BTC', 'quote' => 'CAD');
-        $coinbase->markets['BTC/GBP'] = array ( 'id' => 'btc-gbp', 'symbol' => 'BTC/GBP', 'base' => 'BTC', 'quote' => 'GBP');
-
-    
-    // $exchangeArr = [
-
-    //         [
-    //             'id'=>1,
-    //             'name'=> 'Coinbase'
-    //         ],
-    //         [
-    //             'id'=>2,
-    //             'name'=> 'Kraken'
-    //         ]
-    // ];
-
-        foreach ($exchangesArr as $id => $val)
-        {
-            $exchanges = [];
-            foreach ($currencies as $key => $value) 
-            {
-            
-                if($val == 'Coinbase')
-                {
-
-                    $coinbaseResult = $coinbase->fetch_ticker ('BTC/'.$value);
-                    $buyPrice = $coinbaseResult['info']['buy']['data']['amount'];
-                    $sellPrice = $coinbaseResult['info']['sell']['data']['amount'];
-
-                }
-
-                if($val == 'Kraken')
-                {
-                    $krakenResult = $kraken->fetch_ticker ('BTC/'.$value);
-                    $buyPrice = $krakenResult['info']['a'][0];
-                    $sellPrice = $krakenResult['info']['b'][0];
-
-                }
-
-
-                $exchanges[$value] = array(
-                    'base' => 'BTC',
-                    'currency' => $value,
-                    'buydata' => $buyPrice,
-                    'selldata' => $sellPrice   
-                );
-            }
-
+        dispatch(new ProcessExchanges());
         
-            $exchangesfinal = array(
-
-                'name' => $val,
-                'rates' => $exchanges
-            );
-            $encodeExchanges = json_encode($exchangesfinal);
-
-            
-            DB::table('exchange_data')->insert(
-                ['exchange_id' => $id,'preference' => $encodeExchanges]
-            );
-
-        }
+        Log::info("ProcessExchanges Queues Ends");
+       
     }
 }
