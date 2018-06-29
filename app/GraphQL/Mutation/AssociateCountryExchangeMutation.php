@@ -32,8 +32,9 @@ class AssociateCountryExchangeMutation extends Mutation
     {
         $country = Country::find($args['country_id']);
 
-    
-         $country->exchanges()->sync($args['exchange_id']);
-         return $country;
+        $country->exchanges()->attach($args['exchange_id']);
+
+         //$country->exchanges()->sync($args['exchange_id']);
+        return $country;
     }
 }
