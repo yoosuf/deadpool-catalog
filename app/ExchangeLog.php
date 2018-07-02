@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ExchangeData extends Model
+class ExchangeLog extends Model
 {
     /**
      * The table associated with the model.
@@ -13,9 +13,8 @@ class ExchangeData extends Model
      */
     protected $guarded = [];
 
-    public function exchanges()
+    public function exchange()
     {
         return $this->belongsTo(Exchange::class);
     }
-
 }

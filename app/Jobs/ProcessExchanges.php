@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use DB;
-use App\ExchangeData;
+use App\ExchangeLog;
 use ccxt\ccxt;
 
 
@@ -197,9 +197,16 @@ class ProcessExchanges extends Job
             $encodeExchanges = json_encode($exchangesfinal);
 
             
-            DB::table('exchange_data')->insert(
-                ['exchange_id' => $id,'preference' => $encodeExchanges]
-            );
+            // DB::table('exchange_data')->insert(
+            //     ['exchange_id' => $id,'preference' => $encodeExchanges]
+            // );
+
+            $data = [
+                'exchange_id' => $id,
+                'preference' => $encodeExchanges
+                
+            ];
+            $newData = ExchangeLog::create($data);
 
         }
     }

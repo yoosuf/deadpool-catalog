@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Jobs\ProcessExchanges;
 use Log;
+use DB;
 
 class UpdateExchanges extends Command
 {
@@ -44,7 +45,7 @@ class UpdateExchanges extends Command
         //ProcessExchanges::dispatch();
 
         dispatch(new ProcessExchanges());
-        
+
         Log::info("ProcessExchanges Queues Ends");
        
     }

@@ -36,6 +36,10 @@ class ExchangeType extends BaseType
                 'type' => Type::listOf(GraphQL::type('CountryType')),
                 'description' => 'The relation details'
             ],
+            'exchange_logs' => [
+                'type' => Type::listOf(GraphQL::type('ExchangeLogType')),
+                'description' => 'The relation details'
+            ],
         ];
     }
 }
