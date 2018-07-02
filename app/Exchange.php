@@ -14,14 +14,13 @@ class Exchange extends Model
     protected $guarded = [];
 
 
-    public function countries()
+    public function countriess()
     {
         return $this->belongsToMany(Country::class);
     }
 
-    public function exchangeData()
+    public function exchange_logs()
     {
-        return $this->hasMany(ExchangeData::class);
+        return $this->hasMany(ExchangeLog::class);
     }
-
 }

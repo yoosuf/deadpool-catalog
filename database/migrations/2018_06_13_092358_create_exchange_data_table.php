@@ -13,7 +13,7 @@ class CreateExchangeDataTable extends Migration
      */
     public function up()
     {
-        Schema::create('exchange_data', function (Blueprint $table) {
+        Schema::create('exchange_logs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('exchange_id');
             $table->foreign('exchange_id')
@@ -31,6 +31,6 @@ class CreateExchangeDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exchange_data');
+        Schema::dropIfExists('exchange_logs');
     }
 }

@@ -2,22 +2,22 @@
 
 namespace App\GraphQL\Query;
 
-use App\ExchangeData;
+use App\ExchangeLog;
 use Folklore\GraphQL\Support\Query;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL;
 
-class ExchangeDataQuery extends Query
+class ExchangeLogQuery extends Query
 {
     protected $attributes = [
-        'name' => 'ExchangeDataQuery',
+        'name' => 'exchangeLogQuery',
         'description' => 'A query'
     ];
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('ExchangeDataType'));
+        return Type::listOf(GraphQL::type('ExchangeLogType'));
     }
 
     public function args()
@@ -31,9 +31,9 @@ class ExchangeDataQuery extends Query
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
         if (isset($args['exchange_id'])) {
-            return ExchangeData::where('exchange_id' , $args['exchange_id'])->get();
+            return ExchangeLog::where('exchange_id' , $args['exchange_id'])->get();
         } else {
-            return ExchangeData::all();
+            return ExchangeLog::all();
         }
     }
 }

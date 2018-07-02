@@ -6,10 +6,10 @@ use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Type as BaseType;
 use GraphQL;
 
-class ExchangeDataType extends BaseType
+class ExchangeLogType extends BaseType
 {
     protected $attributes = [
-        'name' => 'ExchangeDataType',
+        'name' => 'ExchangeLogType',
         'description' => 'A type'
     ];
 
