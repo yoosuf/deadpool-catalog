@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Jobs\ProcessExchanges;
-
+use Log;
 
 class UpdateExchanges extends Command
 {
@@ -39,9 +39,13 @@ class UpdateExchanges extends Command
      */
     public function handle()
     {
+        Log::info("ProcessExchanges Queues Begins");
+
         //ProcessExchanges::dispatch();
 
         dispatch(new ProcessExchanges());
 
+        Log::info("ProcessExchanges Queues Ends");
+       
     }
 }
