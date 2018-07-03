@@ -13,6 +13,10 @@ class ExchangeLog extends Model
      */
     protected $guarded = [];
 
+    protected $casts = [
+        'preference' => 'array',
+    ];
+
     public function exchange()
     {
         return $this->belongsTo(Exchange::class);
