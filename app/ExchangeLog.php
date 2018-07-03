@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class ExchangeLog extends Model
 {
@@ -15,7 +16,14 @@ class ExchangeLog extends Model
 
     protected $casts = [
         'preference' => 'array',
+        'created_at' => 'date', 
+        'updated_at' => 'date', 
+
     ];
+    
+    protected function getDateFormat() {
+        return Carbon::format('U');
+    }
 
     public function exchange()
     {

@@ -25,7 +25,7 @@ class ExchangeLogQuery extends Query
         return [
             'exchange_id' => ['name' => 'exchange_id', 'type' => Type::int()],
             'preference' => ['name' => 'preference', 'type' => Type::string()],
-            // 'created_at' => ['name' => 'created_at', 'type' => Type::string()]
+            'created_at' => ['name' => 'created_at', 'type' => Type::string()]
         ];
     }
 
