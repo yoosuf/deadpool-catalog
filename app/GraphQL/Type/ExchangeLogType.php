@@ -27,11 +27,15 @@ class ExchangeLogType extends BaseType
             'preference' => [
                 'type' => Type::string(),
                 'description' => 'The preference of Currency'
+            ],
+            'created_at' => [
+                'type' => Type::string(),
+                'description' => 'The created time of Currency'
+            ], 
+            'updated_at' => [
+                'type' => Type::string(),
+                'description' => 'The created time of Currency'
             ]
-            // 'created_at' => [
-            //     'type' => Type::timestamp(),
-            //     'description' => 'The created time of Currency'
-            // ]
         ];
     }
 }
