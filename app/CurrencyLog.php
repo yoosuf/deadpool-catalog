@@ -11,6 +11,10 @@ class CurrencyLog extends Model
      *
      * @var string
      */
+    protected $casts = [
+        'preference' => 'array',
+    ];
+    
     protected $guarded = [];
 
     
