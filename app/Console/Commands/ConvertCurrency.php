@@ -3,25 +3,25 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Jobs\ProcessExchanges;
-use Log;
+use App\Jobs\UpdateCurrencies;
 
 
-class UpdateExchanges extends Command
+
+class ConvertCurrency extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'UpdateExchanges:updateExchanges';
+    protected $signature = 'ConvertCurrency:convertCurrency';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command update exchanges';
+    protected $description = 'Command convert currency';
 
     /**
      * Create a new command instance.
@@ -40,14 +40,13 @@ class UpdateExchanges extends Command
      */
     public function handle()
     {
-        Log::info("ProcessExchanges Queues Begins");
+        Log::info("UpdateCurrencies Queues Begins");
 
         //ProcessExchanges::dispatch();
 
-        dispatch(new ProcessExchanges());
+        dispatch(new UpdateCurrencies());
 
-        Log::info("ProcessExchanges Queues Ends");
-
-       
+        Log::info("UpdateCurrencies Queues Ends");
+         
     }
 }
