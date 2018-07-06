@@ -60,18 +60,9 @@ class FIltersController extends Controller
         ->limit(7)
         ->get();
 
-        // $results = DB::select(
-            
-        //     "select distinctex.name,co.iso3 from exchanges ex 
-        //     left join country_exchange cex on cex.exchange_id = ex.id
-        //     left join countries co on co.id = cex.country_id
-        //     where co.iso3 in('CAN','USA')"
-    
-        // );
-
-        // print_r($results);exit;
-
         $toExchangeSql = $fromExchangeSql;
+
+       // print_r($fromExchangeSql);exit;
 
    // http://apilayer.net/api/convert?access_key=1b48ca80e794b1efaedb364f3834957c&from=USD&to=GBP&amount=10  
         
@@ -83,14 +74,12 @@ class FIltersController extends Controller
         $finalSellArr = array();
         $finalArr = array();
 
+        //print_r($fromExchangeSql[0]->preference);exit;
 
         foreach ($fromExchangeSql as $key => $value)
         {
             $buyArr = array();
             $exchangeArr = json_decode($value->preference);
-
-            //print_r($exchangeArr);
-
 
            // $buyArr['name'] = $exchangeArr->name;
 
@@ -150,20 +139,23 @@ class FIltersController extends Controller
             
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
             
-                // $val = (floatval($amount) / floatval($finalBuyArr[$i]['price'])) * floatval($finalSellArr[$x]['price']);
+                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
 
-                
-                // $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
-                // $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
+                // echo $val;
+                // echo '\n';
+                $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
+                $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
 
-                // $client = new Client();
-                // $res = $client->get($url);
+                $client = new Client();
+                $res = $client->get($url);
         
-                // $obj = json_decode($res->getBody());
+                $obj = json_decode($res->getBody());
 
-                // $convertedVal = $obj->result;
-                // $calculatedVal = $convertedVal - $amount;
-                 $percentage =  2.234;
+                $convertedVal = $obj->result;
+                $calculatedVal = $convertedVal - $amount;
+                $percentage =  ($calculatedVal/$amount)*100;
+
+                //$percentage = 2.34;
 
                 $finalArr[] = array(
                     'buy' => $trimedBuyArr[$i],

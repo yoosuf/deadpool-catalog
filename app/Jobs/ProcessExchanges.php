@@ -43,9 +43,11 @@ class ProcessExchanges extends Job
         $quadrigacx = new \ccxt\quadrigacx ();
         $acx = new \ccxt\acx();
 
-        // coinspot key = 2b06e54a0ccfc425665e731b57d25d6b
-        // secret = RW0W17A9BFWMGFQQFQBUM7YAKWC7D6V767P8NHCTWAWV3RA9MPPF6NBPYE9F2P44E7PTGEL1AE4B12JAY
-
+      
+        $coinspot    = new \ccxt\coinspot (array (
+            'apiKey' => '2b06e54a0ccfc425665e731b57d25d6b',
+            'secret' => 'RW0W17A9BFWMGFQQFQBUM7YAKWC7D6V767P8NHCTWAWV3RA9MPPF6NBPYE9F2P44E7PTGEL1AE4B12JAY',
+        ));
 
         // $res = $quadrigacx->fetch_ticker('BTC/USD');
         // print_r($res);exit;
@@ -59,18 +61,6 @@ class ProcessExchanges extends Job
         $coinbase->markets['BTC/GBP'] = array ( 'id' => 'btc-gbp', 'symbol' => 'BTC/GBP', 'base' => 'BTC', 'quote' => 'GBP');
 
     
-    // $exchangeArr = [
-
-    //         [
-    //             'id'=>1,
-    //             'name'=> 'Coinbase'
-    //         ],
-    //         [
-    //             'id'=>2,
-    //             'name'=> 'Kraken'
-    //         ]
-    // ];
-
         foreach ($exchangesArr as $id => $val)
         {
             $exchanges = [];
@@ -175,6 +165,38 @@ class ProcessExchanges extends Job
 
                 }
 
+                // if($val == 'acx')
+                // {
+                //     if($value == 'AUD')
+                //     {
+                //         $acxResults = $acx->fetch_ticker ('BTC/AUD');
+                //         $buyPrice = $acxResults['info']['buy'];
+                //         $sellPrice = $acxResults['info']['sell'];
+
+                //     }else
+                //     {
+                //         $buyPrice = 0;
+                //         $sellPrice = 0;
+                //     }
+
+                // }
+
+                // if($val == 'coinspot')
+                // {
+                //     if($value == 'AUD')
+                //     {
+                //         $coinspotResults = $coinspot->fetch_ticker ('BTC/AUD');
+                //         $buyPrice = $coinspotResults['bid'];
+                //         $sellPrice = $coinspotResults['ask'];
+
+                //     }else
+                //     {
+                //         $buyPrice = 0;
+                //         $sellPrice = 0;
+                //     }
+
+                // }
+
                 
 
                 $exchanges[$value] = array(
@@ -185,21 +207,13 @@ class ProcessExchanges extends Job
                 );
             }
 
-            
-
             $exchangesfinal = array(
 
                 'name' => $val,
                 'rates' => $exchanges
             );
 
-            //print_r($exchangesfinal);
             $encodeExchanges = json_encode($exchangesfinal);
-
-            
-            // DB::table('exchange_data')->insert(
-            //     ['exchange_id' => $id,'preference' => $encodeExchanges]
-            // );
 
             $data = [
                 'exchange_id' => $id,
