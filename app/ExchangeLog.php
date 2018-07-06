@@ -14,16 +14,19 @@ class ExchangeLog extends Model
      */
     protected $guarded = [];
 
-    protected $casts = [
-        'preference' => 'array',
-        'created_at' => 'date', 
-        'updated_at' => 'date', 
+    // protected $casts = [
+    //     'preference' => 'array',
+    //     'created_at' => 'date', 
+    //     'updated_at' => 'date', 
 
-    ];
+    // ];
     
-    protected function getDateFormat() {
-        return Carbon::format('U');
-    }
+    // public function getDateFormat() {
+
+    //     $carbon = new Carbon(); 
+    
+    //     return $carbon->format('d/m/Y');
+    // }
 
     public function exchange()
     {
