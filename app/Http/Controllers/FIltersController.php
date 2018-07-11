@@ -47,23 +47,23 @@ class FIltersController extends Controller
    
     public function calculateData(Request $request)
     {
-        //$rate = Swap::latest('EUR/USD');
-
         $apiKey = 'access_key=1b48ca80e794b1efaedb364f3834957c';
 
         $amount = $request->get('amount');
         $fromCurrency = $request->get('buy_currency');
         $toCurrency = $request->get('sell_currency');
-        
+        $cryptoCurrency = $request->get('crypto');
+
         $fromExchangeSql = DB::table('exchange_logs')
         ->latest()
-        ->limit(7)
+        ->limit(2)
         ->get();
+
+       
 
         $toExchangeSql = $fromExchangeSql;
 
-       // print_r($fromExchangeSql);exit;
-
+    
    // http://apilayer.net/api/convert?access_key=1b48ca80e794b1efaedb364f3834957c&from=USD&to=GBP&amount=10  
         
         
@@ -74,8 +74,7 @@ class FIltersController extends Controller
         $finalSellArr = array();
         $finalArr = array();
 
-        //print_r($fromExchangeSql[0]->preference);exit;
-
+        
         foreach ($fromExchangeSql as $key => $value)
         {
             $buyArr = array();
@@ -83,25 +82,34 @@ class FIltersController extends Controller
 
            // $buyArr['name'] = $exchangeArr->name;
 
+    
             foreach ($exchangeArr->rates as $key => $value) 
             {
+                if($key == $fromCurrency)
+                {
+                    foreach ($value as $crypto => $data)
+                    {
+                        if($data->buydata != 0 AND $crypto == $cryptoCurrency)
+                        {
+                            $buyPrice = $data->buydata;
 
-                if($key == $fromCurrency AND $value->buydata != 0){
+                            $buyArr['price'] = $data->buydata;
+                            $buyArr['base'] = $data->base;
+                            $buyArr['currency'] = $data->currency;
+                            $buyArr['name'] = $exchangeArr->name;
 
-                    $buyPrice = $value->buydata;
+                            $finalBuyArr[] = $buyArr;
 
-                    $buyArr['price'] = $value->buydata;
-                    $buyArr['base'] = $value->base;
-                    $buyArr['currency'] = $value->currency;
-                    $buyArr['name'] = $exchangeArr->name;
-
+                        }
+                    }
+                    
                 }
                 
             }
 
-            $finalBuyArr[] = $buyArr;
-
         }
+
+        
         
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
@@ -115,25 +123,49 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-
-                if($key == $toCurrency AND $value->selldata != 0)
+                if($key == $toCurrency)
                 {
-                    $sellPrice = $value->selldata;
-                    
-                    $sellArr['price'] = $value->selldata;
-                    $sellArr['base'] = $value->base;
-                    $sellArr['currency'] = $value->currency;
-                    $sellArr['name'] = $exchangeArr->name;
+                    foreach ($value as $crypto => $data)
+                    {
+                        if($data->selldata != 0 AND $crypto == $cryptoCurrency)
+                        {
+                            $sellPrice = $data->selldata;
+                            $sellArr['price'] = $data->selldata;
+                            $sellArr['base'] = $data->base;
+                            $sellArr['currency'] = $data->currency;
+                            $sellArr['name'] = $exchangeArr->name;
 
+                            $finalSellArr[] = $sellArr;
+
+                        }
+                    }   
                 }
             }
-
-            $finalSellArr[] = $sellArr;
-
         }
 
         $trimedSellArr = $this->purifyArray($finalSellArr);
 
+        $currency_layer = DB::table('currencies')
+            ->join('currency_values', 'currencies.id', '=', 'currency_values.currency_id')
+            ->select('currencies.iso', 'currency_values.other_conversion_values', 'currency_values.created_at')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        foreach ($currency_layer as $id => $value) 
+        {
+            if($value->iso == $toCurrency)
+            {
+                $ratesArr = json_decode($value->other_conversion_values);
+                
+                //json_decode($res->getBody());
+
+            }
+        }
+
+        $keystr = $toCurrency.$fromCurrency;
+
+        $rate = $ratesArr->data->$keystr;
 
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
             
@@ -141,17 +173,19 @@ class FIltersController extends Controller
             
                 $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
 
-                // echo $val;
+                 //echo $val;exit;
                 // echo '\n';
-                $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
-                $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
+                // $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
+                // $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
 
-                $client = new Client();
-                $res = $client->get($url);
+                
+
+                // $client = new Client();
+                // $res = $client->get($url);
         
-                $obj = json_decode($res->getBody());
+                // $obj = json_decode($res->getBody());
 
-                $convertedVal = $obj->result;
+                $convertedVal = $val*$rate;
                 $calculatedVal = $convertedVal - $amount;
                 $percentage =  ($calculatedVal/$amount)*100;
 
@@ -165,14 +199,7 @@ class FIltersController extends Controller
                 );
             }
         }
-
-        // uasort($finalArr, function($a, $b){
-        //    // print_r($b);
-        //     return strcmp($a['profit'], $b['profit']);
-        // });
-
         //print_r($finalArr);exit;
-
 
         return response()->json([
                 'data' => $finalArr,
