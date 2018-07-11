@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use DB;
-use App\CurrencyLog;
+use App\CurrencyValue;
 use GuzzleHttp\Client;
 
 
@@ -26,22 +26,44 @@ class UpdateCurrencies extends Job
      */
     public function handle()
     {
+        $currencyArr = DB::table('currencies')
+        ->whereIn('iso', ['USD', 'CAD', 'GBP'])
+        ->pluck('iso', 'id');
+
+        $currencyStr = '&currencies=USD,CAD,GBP';
+
         $apiKey = 'access_key=1b48ca80e794b1efaedb364f3834957c';
+       
 
-        $url = 'https://apilayer.net/api/live?'.$apiKey;
+       // https://apilayer.net/api/live?access_key=1b48ca80e794b1efaedb364f3834957c&source=GBP&currencies=AUD,CHF,EUR,GBP,PLN&format=1
 
-        $client = new Client();
-        $res = $client->get($url);
+        foreach ($currencyArr as $key => $value)
+        {
+            $finalArr = [];
+            $source = '&source='.$value;
 
-        $response = json_decode($res->getBody());
+            $url = 'https://apilayer.net/api/live?'.$apiKey.$source.$currencyStr.'&format=1';
 
-        $encodeResponse = json_encode($response);
+            
+            $client = new Client();
+            $res = $client->get($url);
+    
+            $response = json_decode($res->getBody());
 
-        $data = [
-            'preference' => $encodeResponse
-        ];
+            $finalArr = array(
+                'source' => $response->source,
+                'data' => $response->quotes
+            );
 
-        $newData = CurrencyLog::create($data);
+            $encodeResponse = json_encode($finalArr);
+
+            $data = [
+                'currency_id' => $key,
+                'other_conversion_values' => $encodeResponse
+            ];
+
+            $newData = CurrencyValue::create($data);
+        }
     }
 
     public function failed(Exception $exception)

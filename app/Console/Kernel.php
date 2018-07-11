@@ -29,6 +29,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('UpdateExchanges:updateExchanges')
         ->cron('0 */2 * * *');
         $schedule->command('ConvertCurrency:convertCurrency')
-        ->cron('0 */8 * * *');
+        ->cron('0 */5 * * *');
     }
 }
