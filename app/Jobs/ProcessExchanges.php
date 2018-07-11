@@ -49,169 +49,189 @@ class ProcessExchanges extends Job
             'secret' => 'RW0W17A9BFWMGFQQFQBUM7YAKWC7D6V767P8NHCTWAWV3RA9MPPF6NBPYE9F2P44E7PTGEL1AE4B12JAY',
         ));
 
-        // $res = $quadrigacx->fetch_ticker('BTC/USD');
-        // print_r($res);exit;
+        
 
 
         $currencies = ['USD', 'CAD', 'GBP'];
 
-        $exchangesArr = DB::table('exchanges')->pluck('name', 'id');
+        $cryptos = ['BTC', 'ETH', 'LTC'];
+
+        $exchangesArr = DB::table('exchanges')
+        ->whereIn('id', [1, 2])
+        ->pluck('name', 'id');
+
 
         $coinbase->markets['BTC/CAD'] = array ( 'id' => 'btc-cad', 'symbol' => 'BTC/CAD', 'base' => 'BTC', 'quote' => 'CAD');
         $coinbase->markets['BTC/GBP'] = array ( 'id' => 'btc-gbp', 'symbol' => 'BTC/GBP', 'base' => 'BTC', 'quote' => 'GBP');
 
-    
+        $coinbase->markets['ETH/CAD'] = array ( 'id' => 'eth-cad', 'symbol' => 'ETH/CAD', 'base' => 'ETH', 'quote' => 'CAD');
+        $coinbase->markets['ETH/GBP'] = array ( 'id' => 'eth-gbp', 'symbol' => 'ETH/GBP', 'base' => 'ETH', 'quote' => 'GBP');
+
+        $coinbase->markets['LTC/CAD'] = array ( 'id' => 'ltc-cad', 'symbol' => 'LTC/CAD', 'base' => 'LTC', 'quote' => 'CAD');
+        $coinbase->markets['LTC/GBP'] = array ( 'id' => 'ltc-gbp', 'symbol' => 'LTC/GBP', 'base' => 'LTC', 'quote' => 'GBP');
+
+
+        // $res = $coinbase->fetch_ticker ('LTC/CAD');
+
+        // print_r($res);exit;
+
         foreach ($exchangesArr as $id => $val)
         {
             $exchanges = [];
             foreach ($currencies as $key => $value) 
             {
-            
-                if($val == 'Coinbase')
+                foreach ($cryptos as $k => $crypto) 
                 {
-
-                    $coinbaseResult = $coinbase->fetch_ticker ('BTC/'.$value);
-                    $buyPrice = $coinbaseResult['info']['buy']['data']['amount'];
-                    $sellPrice = $coinbaseResult['info']['sell']['data']['amount'];
-
-                }
-
-                if($val == 'Kraken')
-                {
-                    $krakenResult = $kraken->fetch_ticker ('BTC/'.$value);
-                    $buyPrice = $krakenResult['info']['a'][0];
-                    $sellPrice = $krakenResult['info']['b'][0];
-
-                }
-
-                if($val == 'Cex')
-                {
-                    if($value == 'CAD')
+                    
+                    if($val == 'Coinbase')
                     {
-                        $buyPrice = 0;
-                        $sellPrice = 0;
-                    }else
-                    {
-                        $cexResult = $cex->fetch_ticker ('BTC/'.$value);
-                        $buyPrice = $cexResult['bid'];
-                        $sellPrice = $cexResult['ask'];
+                        $coinbaseResult = $coinbase->fetch_ticker ($crypto.'/'.$value);
+                        $buyPrice = $coinbaseResult['info']['buy']['data']['amount'];
+                        $sellPrice = $coinbaseResult['info']['sell']['data']['amount'];
                     }
-
-                }
-                if($val == 'GDAX')
-                {
-                    if($value == 'CAD')
+                    else if($val == 'Kraken')
                     {
-                        $buyPrice = 0;
-                        $sellPrice = 0;
-                    }else
-                    {
-                        $gdaxResults = $gdax->fetch_ticker ('BTC/'.$value);
-                        $buyPrice = $gdaxResults['bid'];
-                        $sellPrice = $gdaxResults['ask'];
-                    }
-
-                }
-
-                if($val == 'BITFINEX')
-                {
-                    if($value == 'CAD')
-                    {
-                        $buyPrice = 0;
-                        $sellPrice = 0;
-                    }else
-                    {
-                        if($value == 'USD')
+                        if ($crypto == 'LTC' && ($value == 'CAD' || $value == 'GBP'))
                         {
-                            $bitfinexResults = $bitfinex->fetch_ticker ('BTC/'.$value.'T');
+                            $buyPrice = 0;
+                            $sellPrice = 0;
                         }else
                         {
-                            $bitfinexResults = $bitfinex->fetch_ticker ('BTC/'.$value);
+                            $krakenResult = $kraken->fetch_ticker ($crypto.'/'.$value);
+                            $buyPrice = $krakenResult['info']['a'][0];
+                            $sellPrice = $krakenResult['info']['b'][0];
                         }
-                        
-                        $buyPrice = $bitfinexResults['bid'];
-                        $sellPrice = $bitfinexResults['ask'];
                     }
 
+                    // if($val == 'Cex')
+                    // {
+                    //     if($value == 'CAD')
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }else
+                    //     {
+                    //         $cexResult = $cex->fetch_ticker ('BTC/'.$value);
+                    //         $buyPrice = $cexResult['bid'];
+                    //         $sellPrice = $cexResult['ask'];
+                    //     }
+                    // }
+                    // if($val == 'GDAX')
+                    // {
+                    //     if($value == 'CAD')
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }else
+                    //     {
+                    //         $gdaxResults = $gdax->fetch_ticker ('BTC/'.$value);
+                    //         $buyPrice = $gdaxResults['bid'];
+                    //         $sellPrice = $gdaxResults['ask'];
+                    //     }
+
+                    // }
+
+                    // if($val == 'BITFINEX')
+                    // {
+                    //     if($value == 'CAD')
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }else
+                    //     {
+                    //         if($value == 'USD')
+                    //         {
+                    //             $bitfinexResults = $bitfinex->fetch_ticker ('BTC/'.$value.'T');
+                    //         }else
+                    //         {
+                    //             $bitfinexResults = $bitfinex->fetch_ticker ('BTC/'.$value);
+                    //         }
+                            
+                    //         $buyPrice = $bitfinexResults['bid'];
+                    //         $sellPrice = $bitfinexResults['ask'];
+                    //     }
+
+                    // }
+
+                    // if($val == 'coinfloor')
+                    // {
+                    //     if($value == 'CAD')
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }else
+                    //     {
+                    //         $coinFloorResults = $coinfloor->fetch_ticker ('BTC/'.$value);
+                    //         $buyPrice = $coinFloorResults['bid'];
+                    //         $sellPrice = $coinFloorResults['ask'];
+                    //     }
+
+                    // }
+
+                    // if($val == 'QuadrigaCX')
+                    // {
+                    //     if($value == 'GBP')
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }else
+                    //     {
+                    //         $quadrigacxResults = $quadrigacx->fetch_ticker ('BTC/'.$value);
+                    //         $buyPrice = $quadrigacxResults['bid'];
+                    //         $sellPrice = $quadrigacxResults['ask'];
+                    //     }
+
+                    // }
+
+                    // if($val == 'acx')
+                    // {
+                    //     if($value == 'AUD')
+                    //     {
+                    //         $acxResults = $acx->fetch_ticker ('BTC/AUD');
+                    //         $buyPrice = $acxResults['info']['buy'];
+                    //         $sellPrice = $acxResults['info']['sell'];
+
+                    //     }else
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }
+
+                    // }
+
+                    // if($val == 'coinspot')
+                    // {
+                    //     if($value == 'AUD')
+                    //     {
+                    //         $coinspotResults = $coinspot->fetch_ticker ('BTC/AUD');
+                    //         $buyPrice = $coinspotResults['bid'];
+                    //         $sellPrice = $coinspotResults['ask'];
+
+                    //     }else
+                    //     {
+                    //         $buyPrice = 0;
+                    //         $sellPrice = 0;
+                    //     }
+
+                    // }
+
+                    
+
+                    $exchanges[$value][$crypto] = array(
+                        'base' => $crypto,
+                        'currency' => $value,
+                        'buydata' => $buyPrice,
+                        'selldata' => $sellPrice   
+                    );
                 }
-
-                if($val == 'coinfloor')
-                {
-                    if($value == 'CAD')
-                    {
-                        $buyPrice = 0;
-                        $sellPrice = 0;
-                    }else
-                    {
-                        $coinFloorResults = $coinfloor->fetch_ticker ('BTC/'.$value);
-                        $buyPrice = $coinFloorResults['bid'];
-                        $sellPrice = $coinFloorResults['ask'];
-                    }
-
-                }
-
-                if($val == 'QuadrigaCX')
-                {
-                    if($value == 'GBP')
-                    {
-                        $buyPrice = 0;
-                        $sellPrice = 0;
-                    }else
-                    {
-                        $quadrigacxResults = $quadrigacx->fetch_ticker ('BTC/'.$value);
-                        $buyPrice = $quadrigacxResults['bid'];
-                        $sellPrice = $quadrigacxResults['ask'];
-                    }
-
-                }
-
-                // if($val == 'acx')
-                // {
-                //     if($value == 'AUD')
-                //     {
-                //         $acxResults = $acx->fetch_ticker ('BTC/AUD');
-                //         $buyPrice = $acxResults['info']['buy'];
-                //         $sellPrice = $acxResults['info']['sell'];
-
-                //     }else
-                //     {
-                //         $buyPrice = 0;
-                //         $sellPrice = 0;
-                //     }
-
-                // }
-
-                // if($val == 'coinspot')
-                // {
-                //     if($value == 'AUD')
-                //     {
-                //         $coinspotResults = $coinspot->fetch_ticker ('BTC/AUD');
-                //         $buyPrice = $coinspotResults['bid'];
-                //         $sellPrice = $coinspotResults['ask'];
-
-                //     }else
-                //     {
-                //         $buyPrice = 0;
-                //         $sellPrice = 0;
-                //     }
-
-                // }
-
-                
-
-                $exchanges[$value] = array(
-                    'base' => 'BTC',
-                    'currency' => $value,
-                    'buydata' => $buyPrice,
-                    'selldata' => $sellPrice   
-                );
             }
 
             $exchangesfinal = array(
-
                 'name' => $val,
                 'rates' => $exchanges
             );
+
+            //print_r($exchangesfinal);
 
             $encodeExchanges = json_encode($exchangesfinal);
 
@@ -223,6 +243,8 @@ class ProcessExchanges extends Job
             $newData = ExchangeLog::create($data);
 
         }
+        
+
     }
 
     public function failed(Exception $exception)
