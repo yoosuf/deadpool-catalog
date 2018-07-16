@@ -51,13 +51,12 @@ class ProcessExchanges extends Job
 
         
 
-
         $currencies = ['USD', 'CAD', 'GBP'];
 
         $cryptos = ['BTC', 'ETH', 'LTC'];
 
         $exchangesArr = DB::table('exchanges')
-        ->whereIn('id', [1, 2])
+        ->whereIn('id', [1, 2, 3])
         ->pluck('name', 'id');
 
 
@@ -71,9 +70,9 @@ class ProcessExchanges extends Job
         $coinbase->markets['LTC/GBP'] = array ( 'id' => 'ltc-gbp', 'symbol' => 'LTC/GBP', 'base' => 'LTC', 'quote' => 'GBP');
 
 
-        // $res = $coinbase->fetch_ticker ('LTC/CAD');
+        // $res = $gdax->fetch_ticker ('BTC/GBP');
 
-        // print_r($res);exit;
+        //  print_r($res);exit;
 
         foreach ($exchangesArr as $id => $val)
         {
@@ -101,21 +100,17 @@ class ProcessExchanges extends Job
                             $buyPrice = $krakenResult['info']['a'][0];
                             $sellPrice = $krakenResult['info']['b'][0];
                         }
+                    } else if($val == 'Cex')
+                    {
+                        if ($value == 'CAD' || $crypto == 'LTC') {
+                            $buyPrice = 0;
+                            $sellPrice = 0;
+                        } else {
+                            $cexResult = $cex->fetch_ticker ($crypto.'/'.$value);
+                            $buyPrice = $cexResult['bid'];
+                            $sellPrice = $cexResult['ask'];
+                        }
                     }
-
-                    // if($val == 'Cex')
-                    // {
-                    //     if($value == 'CAD')
-                    //     {
-                    //         $buyPrice = 0;
-                    //         $sellPrice = 0;
-                    //     }else
-                    //     {
-                    //         $cexResult = $cex->fetch_ticker ('BTC/'.$value);
-                    //         $buyPrice = $cexResult['bid'];
-                    //         $sellPrice = $cexResult['ask'];
-                    //     }
-                    // }
                     // if($val == 'GDAX')
                     // {
                     //     if($value == 'CAD')
@@ -243,7 +238,6 @@ class ProcessExchanges extends Job
             $newData = ExchangeLog::create($data);
 
         }
-        
 
     }
 

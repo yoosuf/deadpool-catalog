@@ -56,33 +56,25 @@ class FIltersController extends Controller
 
         $fromExchangeSql = DB::table('exchange_logs')
         ->latest()
-        ->limit(2)
+        ->limit(3)
         ->get();
 
-       
+        //print_r($fromExchangeSql);exit;
 
         $toExchangeSql = $fromExchangeSql;
-
     
-   // http://apilayer.net/api/convert?access_key=1b48ca80e794b1efaedb364f3834957c&from=USD&to=GBP&amount=10  
-        
-        
         $buyPrice = 0;
         $sellPrice = 0;
 
         $finalBuyArr = array();
         $finalSellArr = array();
         $finalArr = array();
-
         
         foreach ($fromExchangeSql as $key => $value)
         {
             $buyArr = array();
             $exchangeArr = json_decode($value->preference);
 
-           // $buyArr['name'] = $exchangeArr->name;
-
-    
             foreach ($exchangeArr->rates as $key => $value) 
             {
                 if($key == $fromCurrency)
@@ -99,27 +91,19 @@ class FIltersController extends Controller
                             $buyArr['name'] = $exchangeArr->name;
 
                             $finalBuyArr[] = $buyArr;
-
                         }
                     }
-                    
                 }
-                
             }
-
         }
 
         
-        
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
-       
         foreach ($toExchangeSql as $key => $value)
         {
             $sellArr = array();
             $exchangeArr = json_decode($value->preference);
-
-            //$sellArr['name'] = $exchangeArr->name;
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
@@ -157,11 +141,10 @@ class FIltersController extends Controller
             if($value->iso == $toCurrency)
             {
                 $ratesArr = json_decode($value->other_conversion_values);
-                
-                //json_decode($res->getBody());
-
             }
         }
+
+        //print_r($currency_layer);exit;
 
         $keystr = $toCurrency.$fromCurrency;
 
@@ -199,12 +182,12 @@ class FIltersController extends Controller
                 );
             }
         }
-        //print_r($finalArr);exit;
+        print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
-                // 'from' => $fromCurrency,
-                // 'to' => $toCurrency
+                'from' => $fromCurrency,
+                'to' => $toCurrency
         ]);
                 
     }
