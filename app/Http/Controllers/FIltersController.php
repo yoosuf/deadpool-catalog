@@ -182,7 +182,7 @@ class FIltersController extends Controller
                 );
             }
         }
-        print_r($finalArr);exit;
+        //print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
