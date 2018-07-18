@@ -4,8 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Jobs\UpdateCurrencies;
-
-
+use Log;
 
 class ConvertCurrency extends Command
 {

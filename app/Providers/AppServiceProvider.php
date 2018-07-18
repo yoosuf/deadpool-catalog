@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\GraphQL\Type\TimestampType;
 
 class AppServiceProvider extends ServiceProvider
 {

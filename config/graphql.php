@@ -202,6 +202,7 @@ return [
         'ExchangeLogType' => App\GraphQL\Type\ExchangeLogType::class,
         'CountryExchangeType' => App\GraphQL\Type\CountryExchangeType::class,
         'CountryCurrencyType' => App\GraphQL\Type\CountryCurrencyType::class,
+        // 'Timestamp' => App\GraphQL\Type\TimestampType::class,
 
         
 

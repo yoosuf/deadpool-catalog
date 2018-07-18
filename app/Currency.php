@@ -20,4 +20,9 @@ class Currency extends Model
         return $this->belongsToMany(Country::class);
     }
 
+    public function currency_values()
+    {
+        return $this->hasMany(CurrencyValue::class);
+    }
+
 }
