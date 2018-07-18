@@ -15,8 +15,19 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-Route::get('currencies', 'FIltersController@getCurrencies');
+$router->get('currencies', 'FIltersController@getCurrencies');
 
-Route::get('calculate', 'FIltersController@calculateData');
+$router->get('calculate', 'FIltersController@calculateData');
 
 
+
+
+
+
+$router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
+
+    $router->get('/exchanges', 'ExchangesController@index');
+    $router->get('/exchanges/{id}', 'ExchangesController@show');
+
+
+});
