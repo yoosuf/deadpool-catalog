@@ -20,7 +20,18 @@ class ExchangeLogsController extends Controller
         $this->model = $model;
     }
 
-    public function all($id, Request $request)
+    public function index(Request $request)
+    {
+        $limit =$request->has('per_page') ? $request->get('per_page') : 10;
+
+        $exchangeLogs = $this->model;
+
+        $historicalData = $exchangeLogs->paginate($limit);
+   
+        return response()->json($historicalData, 200);
+    }
+
+    public function show($id, Request $request)
     {
         $limit =$request->has('per_page') ? $request->get('per_page') : 10;
 
@@ -72,18 +83,4 @@ class ExchangeLogsController extends Controller
    
         return ($err == 0) ? response()->json($historicalData, 200) : response()->json('Bad API Request', 200);
     }
-
-
-    public function index(Request $request)
-    {
-        $limit =$request->has('per_page') ? $request->get('per_page') : 10;
-
-        $exchangeLogs = $this->model;
-
-        $historicalData = $exchangeLogs->paginate($limit);
-   
-        return response()->json($historicalData, 200);
-    }
-
-    //
 }
