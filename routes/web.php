@@ -27,7 +27,10 @@ $router->get('calculate', 'FIltersController@calculateData');
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
 
     $router->get('/exchanges', 'ExchangesController@index');
+    $router->get('/exchanges/history', 'ExchangeLogsController@index');
     $router->get('/exchanges/{id}', 'ExchangesController@show');
+    $router->get('/exchanges/{id}/history', 'ExchangeLogsController@show');
+   
 
 
 });
