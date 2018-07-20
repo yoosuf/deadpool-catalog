@@ -20,11 +20,13 @@ class ExchangeLogsController extends Controller
         $this->model = $model;
     }
 
-    public function all(Request $request)
+    public function all($id, Request $request)
     {
         $limit =$request->has('per_page') ? $request->get('per_page') : 10;
 
         $exchangeLogs = $this->model;
+
+        //echo $id;exit;
 
         $err = 0;
 
@@ -32,13 +34,19 @@ class ExchangeLogsController extends Controller
         if ($request->has('date')) {
 
             $date = date('Y-m-d H:i:s', strtotime($request->get('date')));
-            $historicalData = $exchangeLogs->whereDate('created_at', $date)->get();
+            $historicalData = $exchangeLogs
+            ->whereDate('created_at', $date)
+            ->where('exchange_id', '=', $id)
+            ->get();
             $err = 0;
 
         }else if ($request->has('datetime')) {
 
             $datetime = $request->get('datetime');
-            $historicalData = $exchangeLogs->where('created_at', $datetime)->get();
+            $historicalData = $exchangeLogs
+            ->where('created_at', $datetime)
+            ->where('exchange_id', '=', $id)
+            ->get();
             $err = 0;
 
         }else if ($request->has('from') AND $request->has('to')) {
@@ -49,11 +57,16 @@ class ExchangeLogsController extends Controller
             $historicalData = $exchangeLogs
             ->whereDate('created_at','>=',  $from)
             ->whereDate('created_at', '<=', $to)
+            ->where('exchange_id', '=', $id)
             ->get(); 
             $err = 0;
 
         }else {
-            $err = 1;
+            
+            $historicalData = $exchangeLogs
+            ->where('exchange_id', '=', $id)
+            ->get(); 
+            $err = 0;
 
         }
    
