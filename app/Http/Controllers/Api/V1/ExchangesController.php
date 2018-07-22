@@ -24,9 +24,7 @@ class ExchangesController extends Controller
     public function index(Request $request)
     {
         $limit =$request->has('per_page') ? $request->get('per_page') : 10;
-
         $exchanges = $this->model;
-
         $exchanges = $exchanges->paginate($limit);
    
         return response()->json($exchanges, 200);
