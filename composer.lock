@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "810d53f0e3aba1db93b43707a523d7f8",
@@ -121,16 +121,16 @@
         },
         {
             "name": "ccxt/ccxt",
-            "version": "1.16.85",
+            "version": "1.16.88",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ccxt/ccxt.git",
-                "reference": "8d6d9b0c14fb4bc88ed2f39b9143f97b68c2751c"
+                "reference": "a9d6daff1062469d84bc6649d97e8f620d5a0908"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/8d6d9b0c14fb4bc88ed2f39b9143f97b68c2751c",
-                "reference": "8d6d9b0c14fb4bc88ed2f39b9143f97b68c2751c",
+                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/a9d6daff1062469d84bc6649d97e8f620d5a0908",
+                "reference": "a9d6daff1062469d84bc6649d97e8f620d5a0908",
                 "shasum": ""
             },
             "require": {
@@ -374,7 +374,7 @@
                 "zec",
                 "zerocoin"
             ],
-            "time": "2018-07-21T22:46:01+00:00"
+            "time": "2018-07-23T08:59:26+00:00"
         },
         {
             "name": "clue/stream-filter",

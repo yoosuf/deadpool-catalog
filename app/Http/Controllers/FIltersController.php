@@ -157,11 +157,6 @@ class FIltersController extends Controller
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
             
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
-
-                $buyval = $trimedBuyArr[$i];
-                $sellval = $trimedSellArr[$x];
-            
-                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                 
                 $buyExchange = $trimedBuyArr[$i]['name'];
                 $buybase = $trimedBuyArr[$i]['base'];
@@ -172,7 +167,10 @@ class FIltersController extends Controller
                 $selcurr = $trimedSellArr[$x]['currency'];
 
 
+                if($buybase == $sellbase) {
 
+                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
+            
                 // $convertedVal = $val*$rate;
                 // $calculatedVal = $convertedVal - $amount;
                 // $percentage =  ($calculatedVal/$amount)*100;
@@ -186,6 +184,7 @@ class FIltersController extends Controller
                 $finalArr[$buyExchange]['sell'] = $array;
                 
 
+                }
 
                 //$percentage = 2.34;
 
