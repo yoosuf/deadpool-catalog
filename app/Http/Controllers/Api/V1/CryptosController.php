@@ -10,6 +10,8 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+use App\Http\Transformers\CryptoTransformer;
+
 
 class CryptosController extends Controller
 {
