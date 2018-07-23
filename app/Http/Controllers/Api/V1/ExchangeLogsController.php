@@ -21,26 +21,24 @@ class ExchangeLogsController extends Controller
         $this->model = $model;
     }
 
-
-    private function validateDate($date, $format = 'Y-m-d')
-    {
-        $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) === $date;
-    }
-
     public function index($exchangeId, Request $request)
     {
         $limit = $request->has('per_page') ? $request->get('per_page') : 10;
         $exchange = $this->model->find($exchangeId);
 
+        $validatedData = $this->validate($request, [
+            'date' => 'date_format:"Y-m-d"',
+            'from' => 'date_format:"Y-m-d"',
+            'to' => 'date_format:"Y-m-d"'
+        ]);
+
+       
         $exchangeLogs = $exchange->exchange_logs();
  
         $err = 0;
         if ($request->has('date')) {
 
-            $checkDate = $this->validateDate($request->get('date'));
-
-            if($checkDate) {
+            if($validatedData) {
 
                 $date = date('Y-m-d H:i:s', strtotime($request->get('date')));
                 $historicalData = $exchangeLogs
@@ -48,19 +46,23 @@ class ExchangeLogsController extends Controller
                 ->get();
 
                 $err = 0;
-            } else {
-                $err = 1;
             }
             
 
         } else if ($request->has('from') AND $request->has('to')) {
-            $from = date('Y-m-d H:i:s', strtotime($request->get('from')));
-            $to = date('Y-m-d H:i:s', strtotime($request->get('to')));
-            $historicalData = $exchangeLogs
-            ->whereDate('created_at','>=',  $from)
-            ->whereDate('created_at', '<=', $to)
-            ->get(); 
-            $err = 0;
+            
+            if($validatedData) {
+
+                $from = date('Y-m-d H:i:s', strtotime($request->get('from')));
+                $to = date('Y-m-d H:i:s', strtotime($request->get('to')));
+
+                $historicalData = $exchangeLogs
+                ->whereDate('created_at','>=',  $from)
+                ->whereDate('created_at', '<=', $to)
+                ->get(); 
+                $err = 0;
+            }
+
         } else {
 
             // dd($exchangeLogs);
