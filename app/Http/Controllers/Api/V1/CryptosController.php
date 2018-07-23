@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Crypto;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+
 class CryptosController extends Controller
 {
     protected $model;
@@ -9,7 +14,7 @@ class CryptosController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param Crypto $model
      */
     public function __construct(Crypto $model)
     {

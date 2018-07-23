@@ -1,16 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Route;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-
 use Illuminate\Http\Request;
-use App\ExchangeLog;
-use GuzzleHttp\Client;
-use Swap\Laravel\Facades\Swap;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 
 class FiltersController extends Controller

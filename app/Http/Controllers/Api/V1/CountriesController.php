@@ -14,7 +14,7 @@ class CountriesController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param Country $model
      */
     public function __construct(Country $model)
     {

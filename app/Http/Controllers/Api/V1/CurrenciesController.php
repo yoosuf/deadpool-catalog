@@ -14,7 +14,7 @@ class CurrenciesController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param Currency $model
      */
     public function __construct(Currency $model)
     {

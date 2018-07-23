@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exchange;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DateTime;
 
 class ExchangeLogsController extends Controller
 {
@@ -14,7 +13,7 @@ class ExchangeLogsController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param Exchange $model
      */
     public function __construct(Exchange $model)
     {
