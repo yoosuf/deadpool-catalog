@@ -26,11 +26,18 @@ $router->get('calculate', 'FIltersController@calculateData');
 
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
 
+    $router->get('/countries', 'CountriesController@index');
+    $router->get('/countries/{countryId}', 'CountriesController@show');
+
+    $router->get('/currencies', 'CurrenciesController@index');
+    $router->get('/currencies/{currencyId}', 'CurrenciesController@show');
+
+    $router->get('/cryptos', 'CryptosController@index');
+    $router->get('/cryptos/{cryptoId}', 'CryptosController@show');
+    
     $router->get('/exchanges', 'ExchangesController@index');
     $router->get('/exchanges/{exchangeId}', 'ExchangesController@show');
+
     $router->get('/exchanges/{exchangeId}/logs', 'ExchangeLogsController@index');
     $router->get('/exchanges/{exchangeId}/logs/{logId}', 'ExchangeLogsController@show');
-   
-
-
 });
