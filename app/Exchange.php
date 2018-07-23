@@ -13,6 +13,13 @@ class Exchange extends Model
      */
     protected $guarded = [];
 
+    protected $casts = [
+        'preference' => 'array',
+        'created_at' => 'date', 
+        'updated_at' => 'date', 
+
+    ];
+
 
     public function countriess()
     {

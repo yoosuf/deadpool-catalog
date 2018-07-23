@@ -13,6 +13,13 @@ class Country extends Model
      */
     protected $guarded = [];
 
+    protected $casts = [
+        'preference' => 'array',
+        'created_at' => 'date', 
+        'updated_at' => 'date', 
+
+    ];
+
     public function currencies()
     {
         return $this->belongsToMany(Currency::class);
