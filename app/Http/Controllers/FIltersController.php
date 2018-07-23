@@ -74,7 +74,7 @@ class FIltersController extends Controller
         {
             $buyArr = [];
             $exchangeArr = json_decode($value->preference);
-
+            
             foreach ($exchangeArr->rates as $key => $value) 
             {
                 if($key == $fromCurrency)

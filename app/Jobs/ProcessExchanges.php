@@ -228,7 +228,7 @@ class ProcessExchanges extends Job
 
             //print_r($exchangesfinal);
 
-            $encodeExchanges = json_encode($exchangesfinal);
+            $encodeExchanges = $exchangesfinal;
 
             $data = [
                 'exchange_id' => $id,
