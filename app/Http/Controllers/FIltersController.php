@@ -70,13 +70,14 @@ class FIltersController extends Controller
         $finalSellArr = [];
         $finalArr = [];
         
-        foreach ($fromExchangeSql as $key => $value)
+        foreach ($fromExchangeSql as $key => $val)
         {
             $buyArr = [];
-            $exchangeArr = json_decode($value->preference);
+            $exchangeArr = json_decode($val->preference);
             
             foreach ($exchangeArr->rates as $key => $value) 
             {
+                //print_r($value);exit;
                 if($key == $fromCurrency)
                 {
                     foreach ($value as $crypto => $data)
@@ -89,6 +90,7 @@ class FIltersController extends Controller
                             $buyArr['base'] = $data->base;
                             $buyArr['currency'] = $data->currency;
                             $buyArr['name'] = $exchangeArr->name;
+                            $buyArr['timestamp'] = $val->created_at;
 
                             $finalBuyArr[] = $buyArr;
                         }
@@ -100,10 +102,10 @@ class FIltersController extends Controller
         
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
-        foreach ($toExchangeSql as $key => $value)
+        foreach ($toExchangeSql as $key => $val)
         {
             $sellArr = [];
-            $exchangeArr = json_decode($value->preference);
+            $exchangeArr = json_decode($val->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
@@ -118,6 +120,7 @@ class FIltersController extends Controller
                             $sellArr['base'] = $data->base;
                             $sellArr['currency'] = $data->currency;
                             $sellArr['name'] = $exchangeArr->name;
+                            $sellArr['timestamp'] = $val->created_at;
 
                             $finalSellArr[] = $sellArr;
 
