@@ -36,20 +36,8 @@ class ExchangeLogsController extends Controller
         $exchangeLogs = $exchange->exchange_logs();
  
         $err = 0;
-        if ($request->has('date')) {
-
-            if($validatedData) {
-
-                $date = date('Y-m-d H:i:s', strtotime($request->get('date')));
-                $historicalData = $exchangeLogs
-                ->whereDate('created_at', $date)
-                ->get();
-
-                $err = 0;
-            }
-            
-
-        } else if ($request->has('from') AND $request->has('to')) {
+        
+        if ($request->has('from') AND $request->has('to')) {
             
             if($validatedData) {
 
