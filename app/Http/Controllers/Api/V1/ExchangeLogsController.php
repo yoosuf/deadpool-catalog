@@ -17,6 +17,9 @@ class ExchangeLogsController extends Controller
 {
     protected $model;
 
+    private $fractal;
+
+
     /**
      * Create a new controller instance.
      *
@@ -25,6 +28,8 @@ class ExchangeLogsController extends Controller
     public function __construct(Exchange $model)
     {
         $this->model = $model;
+        $this->fractal = new Manager();
+
     }
 
     public function index($exchangeId, Request $request)
@@ -38,10 +43,7 @@ class ExchangeLogsController extends Controller
             'to' => 'date_format:"Y-m-d"'
         ]);
 
-       
         $exchangeLogs = $exchange->exchange_logs();
- 
-        $err = 0;
 
         if ($request->has('from') AND $request->has('to')) {
             
@@ -52,19 +54,11 @@ class ExchangeLogsController extends Controller
 
                 $historicalData = $exchangeLogs
                 ->whereDate('created_at','>=',  $from)
-                ->whereDate('created_at', '<=', $to)
-                ->paginate($limit); 
-                $err = 0;
+                ->whereDate('created_at', '<=', $to);
             }
 
-        } else {
-
-            // dd($exchangeLogs);
-            $historicalData = $exchangeLogs->paginate($limit); 
-            $err = 0;
         }
-
-
+        $historicalData = $exchangeLogs->paginate($limit);
         $exchanges = $historicalData->getCollection();
         $resource = new Collection($exchanges, new ExchangeLogTransformer);
         $resource->setPaginator(new IlluminatePaginatorAdapter($historicalData));
@@ -76,6 +70,11 @@ class ExchangeLogsController extends Controller
     {
         $exchange = $this->model->find($exchangeId);
         $historicalData = $exchange->exchange_logs->find($logId);
-        return response()->json($historicalData, 200);
+        $resource = new Item($historicalData, new ExchangeLogTransformer);
+        return $this->fractal->createData($resource)->toArray();
+
+
+//        $historicalData = $exchange->exchange_logs->find($logId);
+//        return response()->json($historicalData, 200);
     }
 }
