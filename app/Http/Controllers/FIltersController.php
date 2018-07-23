@@ -73,7 +73,7 @@ class FIltersController extends Controller
         foreach ($fromExchangeSql as $key => $value)
         {
             $buyArr = [];
-            $exchangeArr = $value->preference;
+            $exchangeArr = json_decode($value->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
@@ -103,7 +103,7 @@ class FIltersController extends Controller
         foreach ($toExchangeSql as $key => $value)
         {
             $sellArr = [];
-            $exchangeArr = $value->preference;
+            $exchangeArr = json_decode($value->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
