@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exchange;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use DateTime;
 
 class ExchangeLogsController extends Controller
 {
@@ -20,24 +21,38 @@ class ExchangeLogsController extends Controller
         $this->model = $model;
     }
 
+
+    private function validateDate($date, $format = 'Y-m-d')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) === $date;
+    }
+
     public function index($exchangeId, Request $request)
     {
         $limit = $request->has('per_page') ? $request->get('per_page') : 10;
-        $exchange = $this->model->find(exchangeId);
-        $exchangeLogs = $exchange->exchange_logs;
+        $exchange = $this->model->find($exchangeId);
+
+        $exchangeLogs = $exchange->exchange_logs();
+ 
         $err = 0;
         if ($request->has('date')) {
-            $date = date('Y-m-d H:i:s', strtotime($request->get('date')));
-            $historicalData = $exchangeLogs
-            ->whereDate('created_at', $date)
-            ->get();
-            $err = 0;
-        } else if ($request->has('datetime')) {
-            $datetime = $request->get('datetime');
-            $historicalData = $exchangeLogs
-            ->where('created_at', $datetime)
-            ->get();
-            $err = 0;
+
+            $checkDate = $this->validateDate($request->get('date'));
+
+            if($checkDate) {
+
+                $date = date('Y-m-d H:i:s', strtotime($request->get('date')));
+                $historicalData = $exchangeLogs
+                ->whereDate('created_at', $date)
+                ->get();
+
+                $err = 0;
+            } else {
+                $err = 1;
+            }
+            
+
         } else if ($request->has('from') AND $request->has('to')) {
             $from = date('Y-m-d H:i:s', strtotime($request->get('from')));
             $to = date('Y-m-d H:i:s', strtotime($request->get('to')));
@@ -47,7 +62,9 @@ class ExchangeLogsController extends Controller
             ->get(); 
             $err = 0;
         } else {
-            $historicalData = $exchangeLogs->get(); 
+
+            // dd($exchangeLogs);
+            $historicalData = $exchangeLogs->paginate(10); 
             $err = 0;
         }
    
@@ -56,7 +73,7 @@ class ExchangeLogsController extends Controller
 
     public function show($exchangeId, $logId, Request $request)
     {
-        $exchange = $this->model->find(exchangeId);
+        $exchange = $this->model->find($exchangeId);
         $historicalData = $exchange->exchange_logs->find($logId);
         return response()->json($historicalData, 200);
     }

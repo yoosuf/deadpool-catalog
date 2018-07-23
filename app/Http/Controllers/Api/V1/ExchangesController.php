@@ -31,7 +31,7 @@ class ExchangesController extends Controller
     }
 
 
-    public function show($id, Request $request)
+    public function show($id)
     {
         $exchange = $this->model->findOrFail($id);
         return response()->json($exchange, 200);
