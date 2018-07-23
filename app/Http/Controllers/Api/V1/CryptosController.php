@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Crypto;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use League\Fractal;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Item;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 
 class CryptosController extends Controller
 {
