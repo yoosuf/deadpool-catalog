@@ -18,6 +18,8 @@ class CurrenciesController extends Controller
 
     protected $model;
 
+    private $fractal;
+
     /**
      * Create a new controller instance.
      *
@@ -26,6 +28,8 @@ class CurrenciesController extends Controller
     public function __construct(Currency $model)
     {
         $this->model = $model;
+        $this->fractal = new Manager();
+
     }
 
     

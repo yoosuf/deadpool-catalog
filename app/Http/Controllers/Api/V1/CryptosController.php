@@ -11,6 +11,10 @@ class CryptosController extends Controller
 {
     protected $model;
 
+
+    private $fractal;
+
+
     /**
      * Create a new controller instance.
      *
@@ -19,6 +23,7 @@ class CryptosController extends Controller
     public function __construct(Crypto $model)
     {
         $this->model = $model;
+        $this->fractal = new Manager();
     }
 
 

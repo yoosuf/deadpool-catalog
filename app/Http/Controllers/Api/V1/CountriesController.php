@@ -17,6 +17,9 @@ class CountriesController extends Controller
 {
     protected $model;
 
+    private $fractal;
+
+
     /**
      * Create a new controller instance.
      *
@@ -25,6 +28,7 @@ class CountriesController extends Controller
     public function __construct(Country $model)
     {
         $this->model = $model;
+        $this->fractal = new Manager();
     }
     
     public function index(Request $request)
