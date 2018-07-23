@@ -26,14 +26,28 @@ class CryptosController extends Controller
     
     public function index(Request $request)
     {
-        $limit = $request->has('per_page') ? $request->get('per_page') : 10;
-        $cryptos = $this->model->paginate($limit);
-        return response()->json($cryptos, 200);
+
+        $limit =$request->has('per_page') ? $request->get('per_page') : 10;
+        $paginatedData = $this->model->paginate($limit);
+        $cryptos = $paginatedData->getCollection();
+        $resource = new Collection($cryptos, new CryptoTransformer);
+        $resource->setPaginator(new IlluminatePaginatorAdapter($paginatedData));
+        return $this->fractal->createData($resource)->toArray();
+
+//
+//        $limit = $request->has('per_page') ? $request->get('per_page') : 10;
+//        $cryptos = $this->model->paginate($limit);
+//        return response()->json($cryptos, 200);
     }
 
     public function show($id) 
     {
-        $crypto = $this->model->find($id);
-        return response()->json($crypto, 200);
+
+        $country = $this->model->find($id);
+        $crypto = new Item($country, new CryptoTransformer);
+        return $this->fractal->createData($crypto)->toArray();
+
+//        $crypto = $this->model->find($id);
+//        return response()->json($crypto, 200);
     }
 }
