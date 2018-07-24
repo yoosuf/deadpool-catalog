@@ -16,8 +16,8 @@ class CryptoTransformer extends Fractal\TransformerAbstract
             'symbol'                =>  $data->symbol,
             'is_active'             =>  $data->is_active,
             'preference'            =>  $data->preference,
-            'created_at'            =>  $data->created_at->format('d-m-Y'),
-            'updated_at'            =>  $data->updated_at->format('d-m-Y'),
+            'created_at'            =>  $data->created_at->toDateTimeString(),
+            'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
                     'uri'           => 'cryptos/'.$data->id,

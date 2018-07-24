@@ -12,8 +12,8 @@ class ExchangeLogTransformer extends Fractal\TransformerAbstract
         return [
             'id'                    =>  (int) $data->id,
             'preference'            =>  $data->preference,
-            'created_at'            =>  $data->created_at->format('d-m-Y'),
-            'updated_at'            =>  $data->updated_at->format('d-m-Y'),
+            'created_at'            =>  $data->created_at->toDateTimeString(),
+            'updated_at'            =>  $data->updated_at->toDateTimeString(),
         ];
     }
 }
