@@ -21,7 +21,7 @@ class CountryTransformer extends Fractal\TransformerAbstract
             'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
-                    'uri'           => 'countries/'.$data->id,
+                    '_self'           => url("v1/countries/{$data->id}"),
                 ]
             ],
         ];

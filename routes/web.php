@@ -29,7 +29,26 @@ $router->get('/', function () use ($router) {
 
 $router->get('calculate', 'FIltersController@calculateData');
 
+
+
+// $router->group(
+//     ['middleware' => 'jwt.auth'], 
+//     function() use ($router) {
+//         $router->get('users', function() {
+//             $users = \App\User::all();
+//             return response()->json($users);
+//         });
+//     }
+// );
+
+
+
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
+
+
+    
+
+    $router->post('auth/login', ['uses' => 'AuthController@authenticate']);
 
     $router->get('calculate', 'FiltersController@calculateData');
 

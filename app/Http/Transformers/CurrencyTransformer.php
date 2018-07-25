@@ -21,7 +21,7 @@ class CurrencyTransformer extends Fractal\TransformerAbstract
             'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
-                    'uri'           => 'currencies/'.$data->id,
+                    '_self'           => url("v1/currencies/{$data->id}"),
                 ]
             ],
         ];

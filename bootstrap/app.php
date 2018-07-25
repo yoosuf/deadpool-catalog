@@ -70,9 +70,10 @@ $app->middleware([
     Spatie\Cors\Cors::class,
 ]);
 
-// $app->routeMiddleware([
+$app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+    'jwt.auth' => App\Http\Middleware\JwtMiddleware::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -99,8 +100,7 @@ $app->configure('swap');
 
 // Register the service provider
 $app->register(Swap\Laravel\SwapServiceProvider::class);
-
-
+$app->register(Neoxia\Routing\ResponseFactoryServiceProvider::class);
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 $app->register(Spatie\Cors\CorsServiceProvider::class);
 
