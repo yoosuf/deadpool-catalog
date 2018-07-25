@@ -14,11 +14,13 @@ class ExchangeTransformer extends Fractal\TransformerAbstract
             'name'                  =>  $data->name,
             'description'           =>  $data->description,
             'preference'            =>  $data->preference,
-            'created_at'            =>  $data->created_at->format('d-m-Y'),
-            'updated_at'            =>  $data->updated_at->format('d-m-Y'),
+            'created_at'            =>  $data->created_at->toDateTimeString(),
+            'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
-                    'uri'           => 'exchanges/'.$data->id,
+                    '_self'           => url("v1/exchanges/{$data->id}"),
+                    'exchange_logs_uri'      => url("v1/exchanges/{$data->id}/logs")
+                    
                 ]
             ],
         ];

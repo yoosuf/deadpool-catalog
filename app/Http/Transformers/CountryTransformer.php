@@ -17,11 +17,11 @@ class CountryTransformer extends Fractal\TransformerAbstract
             'iso3'                  =>  $data->iso3,
             'phone_code'            =>  $data->phone_code,
             'preference'            =>  $data->preference,
-            'created_at'            =>  $data->created_at->format('d-m-Y'),
-            'updated_at'            =>  $data->updated_at->format('d-m-Y'),
+            'created_at'            =>  $data->created_at->toDateTimeString(),
+            'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
-                    'uri'           => 'countries/'.$data->id,
+                    '_self'           => url("v1/countries/{$data->id}"),
                 ]
             ],
         ];
