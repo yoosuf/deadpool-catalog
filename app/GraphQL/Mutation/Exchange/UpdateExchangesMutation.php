@@ -23,8 +23,7 @@ class UpdateExchangesMutation extends Mutation
     public function rules()
     {
         return [
-            'name' => 'required|unique:exchanges',
-            'description' => 'required',
+            'name' => 'required|unique:exchanges'
         ];
     }
 
