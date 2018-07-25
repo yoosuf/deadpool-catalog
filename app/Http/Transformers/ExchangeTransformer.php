@@ -18,7 +18,9 @@ class ExchangeTransformer extends Fractal\TransformerAbstract
             'updated_at'            =>  $data->updated_at->toDateTimeString(),
             'links'                 => [
                 [
-                    'uri'           => 'exchanges/'.$data->id,
+                    '_self'           => url("v1/exchanges/{$data->id}"),
+                    'exchange_logs_uri'      => url("v1/exchanges/{$data->id}/logs")
+                    
                 ]
             ],
         ];

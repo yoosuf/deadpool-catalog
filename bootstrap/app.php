@@ -100,8 +100,7 @@ $app->configure('swap');
 
 // Register the service provider
 $app->register(Swap\Laravel\SwapServiceProvider::class);
-
-
+$app->register(Neoxia\Routing\ResponseFactoryServiceProvider::class);
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 $app->register(Spatie\Cors\CorsServiceProvider::class);
 

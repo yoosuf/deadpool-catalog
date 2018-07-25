@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e875a04da30e2d8f3ae869c0f5b3c3e6",
+    "content-hash": "188adeb9a5d59d470e93069c5f732928",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -2680,6 +2680,50 @@
             "time": "2017-06-19T01:22:40+00:00"
         },
         {
+            "name": "neoxia/laravel-csv-response",
+            "version": "v1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neoxia/laravel-csv-response.git",
+                "reference": "262fca8fa2389e06ce9c821ee04fd88f58b8d3cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neoxia/laravel-csv-response/zipball/262fca8fa2389e06ce9c821ee04fd88f58b8d3cb",
+                "reference": "262fca8fa2389e06ce9c821ee04fd88f58b8d3cb",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/routing": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
+                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.8.*",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Neoxia\\Routing\\ResponseFactoryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neoxia\\": "src/Neoxia/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Add a CSV response type to Laravel",
+            "time": "2018-06-13T09:59:54+00:00"
+        },
+        {
             "name": "nesbot/carbon",
             "version": "1.32.0",
             "source": {
@@ -2779,6 +2823,55 @@
                 "routing"
             ],
             "time": "2018-02-13T20:26:39+00:00"
+        },
+        {
+            "name": "ozdemirburak/json-csv",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ozdemirburak/json-csv.git",
+                "reference": "f98edd581aafc4d8bd46c683bb69dc7f13f3fe8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ozdemirburak/json-csv/zipball/f98edd581aafc4d8bd46c683bb69dc7f13f3fe8e",
+                "reference": "f98edd581aafc4d8bd46c683bb69dc7f13f3fe8e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.0|~6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OzdemirBurak\\JsonCsv\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Burak Özdemir",
+                    "email": "mail@burakozdemir.co.uk",
+                    "homepage": "https://burakozdemir.co.uk"
+                }
+            ],
+            "description": "JSON to CSV and CSV to JSON converters in PHP.",
+            "homepage": "https://github.com/ozdemirburak/json-csv",
+            "keywords": [
+                "csv",
+                "csv to json",
+                "csv2json",
+                "json",
+                "json to csv",
+                "json2csv"
+            ],
+            "time": "2018-02-26T00:04:55+00:00"
         },
         {
             "name": "php-http/discovery",
