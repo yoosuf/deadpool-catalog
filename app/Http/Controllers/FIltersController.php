@@ -61,6 +61,9 @@ class FIltersController extends Controller
 
         //print_r($fromExchangeSql);exit;
 
+        $cryptoArr = ['BTC','ETH'];
+        $currencyArr = ['USD','CAD'];
+
         $toExchangeSql = $fromExchangeSql;
     
         $buyPrice = 0;
@@ -70,10 +73,10 @@ class FIltersController extends Controller
         $finalSellArr = array();
         $finalArr = array();
         
-        foreach ($fromExchangeSql as $key => $value)
+        foreach ($fromExchangeSql as $k => $val)
         {
             $buyArr = array();
-            $exchangeArr = json_decode($value->preference);
+            $exchangeArr = json_decode($val->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
@@ -89,6 +92,7 @@ class FIltersController extends Controller
                             $buyArr['base'] = $data->base;
                             $buyArr['currency'] = $data->currency;
                             $buyArr['name'] = $exchangeArr->name;
+                            $buyArr['timestamp'] = $val->created_at;
 
                             $finalBuyArr[] = $buyArr;
                         }
@@ -97,15 +101,15 @@ class FIltersController extends Controller
             }
         }
 
-        //print_r($finalBuyArr);exit;
+       // print_r($finalBuyArr);exit;
 
         
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
-        foreach ($toExchangeSql as $key => $value)
+        foreach ($toExchangeSql as $k => $val)
         {
             $sellArr = array();
-            $exchangeArr = json_decode($value->preference);
+            $exchangeArr = json_decode($val->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
@@ -120,6 +124,7 @@ class FIltersController extends Controller
                             $sellArr['base'] = $data->base;
                             $sellArr['currency'] = $data->currency;
                             $sellArr['name'] = $exchangeArr->name;
+                            $sellArr['timestamp'] = $val->created_at;
 
                             $finalSellArr[] = $sellArr;
 
@@ -128,6 +133,8 @@ class FIltersController extends Controller
                }
             }
         }
+
+        //print_r($finalSellArr);exit;
 
         $trimedSellArr = $this->purifyArray($finalSellArr);
 
@@ -155,46 +162,41 @@ class FIltersController extends Controller
         $rate = $ratesArr->data->$keystr;
 
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
+
+            $buybase = $trimedBuyArr[$i]['base'];
+            $buyExchange = $trimedBuyArr[$i]['name'];
+                
+            $curr = $trimedBuyArr[$i]['currency'];
+
+            $array = [];
             
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
                 
-                $buyExchange = $trimedBuyArr[$i]['name'];
-                $buybase = $trimedBuyArr[$i]['base'];
-                $curr = $trimedBuyArr[$i]['currency'];
 
                 $sellExchange = $trimedSellArr[$x]['name'];
                 $sellbase = $trimedSellArr[$x]['base'];
                 $selcurr = $trimedSellArr[$x]['currency'];
 
+                if($buybase == $sellbase)
+                {
+                    $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
+                    $convertedVal = $val*$rate;
+                    $calculatedVal = $convertedVal - $amount;
+                    $percentage =  ($calculatedVal/$amount)*100;
 
-                if($buybase == $sellbase) {
-
-                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
-            
-                // $convertedVal = $val*$rate;
-                // $calculatedVal = $convertedVal - $amount;
-                // $percentage =  ($calculatedVal/$amount)*100;
-
-                $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
-
-                // $array[$sellExchange]['profit'] = number_format((float)$percentage, 2, '.', '');
-
-
-                $finalArr[$buyExchange]['buy'][$buybase] = $trimedBuyArr[$i];
-                $finalArr[$buyExchange]['sell'] = $array;
                 
+                    $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
+                    $array[$sellExchange][$sellbase]['profit'] = number_format((float)$percentage, 2, '.', '');
 
-                }
+                    $finalArr[$buyExchange][$buybase]['buy'] = $trimedBuyArr[$i];
+                    $finalArr[$buyExchange][$buybase]['sell'] = $array;
 
-                //$percentage = 2.34;
-
-                // $finalArr[$buyExchange] = array(
-                //     $buybase => $trimedBuyArr[$i],
-                   
-                // );
+               }
+                 
             }
         }
-       print_r($finalArr);exit;
+     
+       //print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
