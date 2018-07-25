@@ -1,21 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-//use App\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Route;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-
 use Illuminate\Http\Request;
-use App\ExchangeLog;
-use GuzzleHttp\Client;
-use Swap\Laravel\Facades\Swap;
-use DB;
+use Illuminate\Support\Facades\DB;
 
-//use Swap;
 
-class FIltersController extends Controller
+class FiltersController extends Controller
 {
     /**
      * Show the profile for the given user.
@@ -66,13 +58,13 @@ class FIltersController extends Controller
         $buyPrice = 0;
         $sellPrice = 0;
 
-        $finalBuyArr = array();
-        $finalSellArr = array();
-        $finalArr = array();
+        $finalBuyArr = [];
+        $finalSellArr = [];
+        $finalArr = [];
         
         foreach ($fromExchangeSql as $key => $value)
         {
-            $buyArr = array();
+            $buyArr = [];
             $exchangeArr = json_decode($value->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
@@ -81,7 +73,7 @@ class FIltersController extends Controller
                 {
                     foreach ($value as $crypto => $data)
                     {
-                        if($data->buydata != 0)
+                        if($data->buydata != 0 AND $crypto == $cryptoCurrency)
                         {
                             $buyPrice = $data->buydata;
 
@@ -97,14 +89,12 @@ class FIltersController extends Controller
             }
         }
 
-        //print_r($finalBuyArr);exit;
-
         
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
         foreach ($toExchangeSql as $key => $value)
         {
-            $sellArr = array();
+            $sellArr = [];
             $exchangeArr = json_decode($value->preference);
 
             foreach ($exchangeArr->rates as $key => $value) 
@@ -113,7 +103,7 @@ class FIltersController extends Controller
                 {
                     foreach ($value as $crypto => $data)
                     {
-                        if($data->selldata != 0)
+                        if($data->selldata != 0 AND $crypto == $cryptoCurrency)
                         {
                             $sellPrice = $data->selldata;
                             $sellArr['price'] = $data->selldata;
@@ -125,7 +115,7 @@ class FIltersController extends Controller
 
                         }
                     }   
-               }
+                }
             }
         }
 
@@ -146,9 +136,7 @@ class FIltersController extends Controller
             }
         }
 
-       // print_r($trimedBuyArr);exit;
-
-
+        //print_r($currency_layer);exit;
 
         $keystr = $toCurrency.$fromCurrency;
 
@@ -157,44 +145,36 @@ class FIltersController extends Controller
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
             
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
-                
-                $buyExchange = $trimedBuyArr[$i]['name'];
-                $buybase = $trimedBuyArr[$i]['base'];
-                $curr = $trimedBuyArr[$i]['currency'];
-
-                $sellExchange = $trimedSellArr[$x]['name'];
-                $sellbase = $trimedSellArr[$x]['base'];
-                $selcurr = $trimedSellArr[$x]['currency'];
-
-
-                if($buybase == $sellbase) {
-
-                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
             
-                // $convertedVal = $val*$rate;
-                // $calculatedVal = $convertedVal - $amount;
-                // $percentage =  ($calculatedVal/$amount)*100;
+                $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
 
-                $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
+                 //echo $val;exit;
+                // echo '\n';
+                // $query = "&from=$toCurrency&to=$fromCurrency&amount= $val";
+                // $url = 'https://apilayer.net/api/convert?'.$apiKey.$query;
 
-                // $array[$sellExchange]['profit'] = number_format((float)$percentage, 2, '.', '');
-
-
-                $finalArr[$buyExchange]['buy'][$buybase] = $trimedBuyArr[$i];
-                $finalArr[$buyExchange]['sell'] = $array;
                 
 
-                }
+                // $client = new Client();
+                // $res = $client->get($url);
+        
+                // $obj = json_decode($res->getBody());
+
+                $convertedVal = $val*$rate;
+                $calculatedVal = $convertedVal - $amount;
+                $percentage =  ($calculatedVal/$amount)*100;
 
                 //$percentage = 2.34;
 
-                // $finalArr[$buyExchange] = array(
-                //     $buybase => $trimedBuyArr[$i],
-                   
-                // );
+                $finalArr[] = array(
+                    'buy' => $trimedBuyArr[$i],
+                    'sell' => $trimedSellArr[$x],
+                    'profit' => number_format((float)$percentage, 2, '.', '')
+
+                );
             }
         }
-       print_r($finalArr);exit;
+        //print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,

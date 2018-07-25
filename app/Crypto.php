@@ -12,4 +12,11 @@ class Crypto extends Model
      * @var string
      */
     protected $guarded = [];
+
+    protected $casts = [
+        'preference' => 'array',
+        'created_at' => 'date', 
+        'updated_at' => 'date', 
+
+    ];
 }

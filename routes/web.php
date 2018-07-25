@@ -12,25 +12,58 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
-});
 
-$router->get('currencies', 'FIltersController@getCurrencies');
+    $quoteList = [
+        "Jealousy is a dog's bark which attracts thieves. - Karl Kraus", 
+        "The great thieves lead away the little thief. - Diogenes", 
+        "Real knowledge is to know the extent of one's ignorance. - Confucius", 
+        "The true sign of intelligence is not knowledge but imagination. - Albert Einstein", 
+        "Work like you don't need the money. Love like you've never been hurt. Dance like nobody's watching. - Satchel Paige", 
+        "Making money is art and working is art and good business is the best art. - Andy Warhol"
+    ];
+
+    return response()->json(["quote" => $quoteList[mt_rand(0, count($quoteList)-1)]], 200);
+
+    // return $router->app->version();
+});
 
 $router->get('calculate', 'FIltersController@calculateData');
 
 
 
+// $router->group(
+//     ['middleware' => 'jwt.auth'], 
+//     function() use ($router) {
+//         $router->get('users', function() {
+//             $users = \App\User::all();
+//             return response()->json($users);
+//         });
+//     }
+// );
 
 
 
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
 
-    $router->get('/exchanges', 'ExchangesController@index');
-    $router->get('/exchanges/history', 'ExchangeLogsController@index');
-    $router->get('/exchanges/{id}', 'ExchangesController@show');
-    $router->get('/exchanges/{id}/history', 'ExchangeLogsController@show');
-   
 
+    
 
+    $router->post('auth/login', ['uses' => 'AuthController@authenticate']);
+
+    $router->get('calculate', 'FiltersController@calculateData');
+
+    $router->get('countries', 'CountriesController@index');
+    $router->get('countries/{countryId}', 'CountriesController@show');
+
+    $router->get('currencies', 'CurrenciesController@index');
+    $router->get('currencies/{currencyId}', 'CurrenciesController@show');
+
+    $router->get('cryptos', 'CryptosController@index');
+    $router->get('cryptos/{cryptoId}', 'CryptosController@show');
+    
+    $router->get('exchanges', 'ExchangesController@index');
+    $router->get('exchanges/{exchangeId}', 'ExchangesController@show');
+
+    $router->get('exchanges/{exchangeId}/logs', 'ExchangeLogsController@index');
+    $router->get('exchanges/{exchangeId}/logs/{logId}', 'ExchangeLogsController@show');
 });
