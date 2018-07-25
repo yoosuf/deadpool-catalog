@@ -53,7 +53,9 @@ class FIltersController extends Controller
         $fromCurrency = $request->get('buy_currency');
         $toCurrency = $request->get('sell_currency');
         $cryptoCurrency = $request->get('crypto');
+        $withFee = $request->get('fee');
 
+        
         $fromExchangeSql = DB::table('exchange_logs')
         ->latest()
         ->limit(3)
@@ -155,7 +157,7 @@ class FIltersController extends Controller
 
        // print_r($trimedBuyArr);exit;
 
-
+       
 
         $keystr = $toCurrency.$fromCurrency;
 
@@ -169,6 +171,9 @@ class FIltersController extends Controller
             $curr = $trimedBuyArr[$i]['currency'];
 
             $array = [];
+            //$calculatedValWithFees = 0;
+
+            
             
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
                 
@@ -177,13 +182,25 @@ class FIltersController extends Controller
                 $sellbase = $trimedSellArr[$x]['base'];
                 $selcurr = $trimedSellArr[$x]['currency'];
 
+                //echo $withFee;
+
                 if($buybase == $sellbase)
                 {
+                    
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                     $convertedVal = $val*$rate;
                     $calculatedVal = $convertedVal - $amount;
+
+                    //echo $val.'/';
+                    
+                   
+                    $calculatedValWithFees = ($withFee) ? ($calculatedVal*98)/100 : $calculatedVal;
+
+                   
+                    
                     $percentage =  ($calculatedVal/$amount)*100;
 
+    
                 
                     $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
                     $array[$sellExchange][$sellbase]['profit'] = number_format((float)$percentage, 2, '.', '');
@@ -195,7 +212,7 @@ class FIltersController extends Controller
                  
             }
         }
-     
+     //exit;
        //print_r($finalArr);exit;
 
         return response()->json([
