@@ -204,7 +204,7 @@ class FIltersController extends Controller
             $buybase = $trimedBuyArr[$i]['base'];
             $buyExchange = $trimedBuyArr[$i]['name'];
                 
-            $curr = $trimedBuyArr[$i]['currency'];
+            $buyCurr = $trimedBuyArr[$i]['currency'];
 
             $array = [];
             //$calculatedValWithFees = 0;
@@ -222,7 +222,7 @@ class FIltersController extends Controller
 
                 //echo $withFee;
 
-                if($buybase == $sellbase)
+                if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
                 {
                  
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
@@ -236,7 +236,8 @@ class FIltersController extends Controller
 
 
                     //echo $percentage.'/';
-                
+                    //echo $buyExchange.'-'.$sellExchange.'|'.$buybase.'-'.$sellbase.'/';
+
                     $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
                     $array[$sellExchange][$sellbase]['profit'] = number_format((float)$percentage, 2, '.', '');
 
@@ -247,6 +248,8 @@ class FIltersController extends Controller
                  
             }
         }
+
+       // print_r($finalArr);exit;
     //exit;
         return response()->json([
                 'data' => $finalArr,
