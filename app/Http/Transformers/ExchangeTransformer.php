@@ -7,6 +7,17 @@ use League\Fractal;
 
 class ExchangeTransformer extends Fractal\TransformerAbstract
 {
+
+
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $defualtIncludes = [
+        'countries'
+    ];
+
     public function transform($data)
     {
         return [
@@ -24,5 +35,17 @@ class ExchangeTransformer extends Fractal\TransformerAbstract
                 ]
             ],
         ];
+    }
+
+
+    /**
+     * Include Exchanges
+     *
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeCountries($data)
+    {
+        $countries = $data->countries();
+        return $this->collection($countries, new CountryTransformer);
     }
 }

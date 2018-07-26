@@ -15,13 +15,11 @@ class Exchange extends Model
 
     protected $casts = [
         'preference' => 'array',
-        'created_at' => 'date', 
-        'updated_at' => 'date', 
 
     ];
 
 
-    public function countriess()
+    public function countries()
     {
         return $this->belongsToMany(Country::class);
     }
