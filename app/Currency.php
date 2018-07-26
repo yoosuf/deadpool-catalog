@@ -15,8 +15,6 @@ class Currency extends Model
 
     protected $casts = [
         'preference' => 'array',
-        'created_at' => 'date', 
-        'updated_at' => 'date', 
 
     ];
 
