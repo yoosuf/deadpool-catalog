@@ -229,10 +229,11 @@ class FIltersController extends Controller
                     $convertedVal = $val*$rate;
                     $calculatedVal = $convertedVal - $amount;
 
-                    
-                    $calculatedValWithFees = ($withFee === 'true') ? ($calculatedVal*98)/100 : $calculatedVal;
+                
+                    $percentage =  ($calculatedVal/$amount)*100;
 
-                    $percentage =  ($calculatedValWithFees/$amount)*100;
+                    $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
+
 
                     //echo $percentage.'/';
                 
