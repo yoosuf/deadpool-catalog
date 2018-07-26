@@ -96,7 +96,7 @@ class FIltersController extends Controller
                                 $buyArr['base'] = $data->base;
                                 $buyArr['currency'] = $data->currency;
                                 $buyArr['name'] = $exchangeArr->name;
-                                $buyArr['timestamp'] = $val->created_at;
+                                $buyArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
 
                                 $finalBuyArr[] = $buyArr;
                             }
@@ -110,7 +110,7 @@ class FIltersController extends Controller
                                 $buyArr['base'] = $data->base;
                                 $buyArr['currency'] = $data->currency;
                                 $buyArr['name'] = $exchangeArr->name;
-                                $buyArr['timestamp'] = $val->created_at;
+                                $buyArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
 
                                 $finalBuyArr[] = $buyArr;
                             }
@@ -146,7 +146,7 @@ class FIltersController extends Controller
                                 $sellArr['base'] = $data->base;
                                 $sellArr['currency'] = $data->currency;
                                 $sellArr['name'] = $exchangeArr->name;
-                                $sellArr['timestamp'] = $val->created_at;
+                                $sellArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
 
                                 $finalSellArr[] = $sellArr;
 
@@ -160,7 +160,7 @@ class FIltersController extends Controller
                                 $sellArr['base'] = $data->base;
                                 $sellArr['currency'] = $data->currency;
                                 $sellArr['name'] = $exchangeArr->name;
-                                $sellArr['timestamp'] = $val->created_at;
+                                $sellArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
 
                                 $finalSellArr[] = $sellArr;
 
@@ -249,7 +249,7 @@ class FIltersController extends Controller
             }
         }
 
-       // print_r($finalArr);exit;
+        // print_r($finalArr);exit;
     //exit;
         return response()->json([
                 'data' => $finalArr,
