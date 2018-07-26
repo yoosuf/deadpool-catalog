@@ -57,10 +57,77 @@ class ExchangeLogsController extends Controller
          * Based on the users request type=csv downloading the data
          */
         if ($request->has('type') && $request->get('type') == "csv") {
-            $historicalData = $exchangeLogs->get();
-            $json_str = $historicalData->toArray();
+            
+            $historicalData = $exchangeLogs->limit($limit)->get();
 
-            return $json_str;
+            
+            $dataArray = $historicalData->toArray();
+
+            // Set response headers to trigger file download on client side
+            header("Content-type: application/csv");
+            header("Content-Disposition: attachment;filename=exchange_logs.csv");
+
+            $output_file_pointer = fopen('php://output', 'w');
+
+            // Output the CSV headers
+            $headers = array(
+                'Exchange',
+                'Currency',
+                'Crypto',
+                'Buy Price',
+                'Sell Price',
+                'Time',
+            );
+
+            fputcsv($output_file_pointer, $headers);
+
+            foreach($dataArray as $key => $val) {
+              
+                $preference = is_array($val['preference']) ? $val['preference']['rates'] : json_decode($val['preference'])->rates;
+
+                
+                foreach ($preference as $crypto => $data)
+                {
+                    foreach ($data as $k => $v)
+                    {
+                        if(is_array($val['preference']))
+                        {
+                            $output = array(
+                                $val['preference']['name'],
+                                $v['currency'],
+                                $v['base'],
+                                $v['buydata'],
+                                $v['selldata'],
+                                $val['created_at']
+                            );
+                            
+                            fputcsv($output_file_pointer, $output);
+                            ob_flush();
+                            flush();
+
+                        } else {
+
+                           // if($v->buydata != 0){
+                                $output = array(
+                                    json_decode($val['preference'])->name,
+                                    $v->currency,
+                                    $v->base,
+                                    $v->buydata,
+                                    $v->selldata,
+                                    $val['created_at']
+                                );
+                            //}
+                            
+                            fputcsv($output_file_pointer, $output);
+                            ob_flush();
+                            flush();
+                        }
+                    }
+                }
+            }
+
+            fclose($output_file_pointer);
+            die;
         }
 
         /**
