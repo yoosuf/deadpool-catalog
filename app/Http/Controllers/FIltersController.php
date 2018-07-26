@@ -61,7 +61,7 @@ class FIltersController extends Controller
         ->limit(3)
         ->get();
 
-        //print_r($fromExchangeSql);exit;
+        //print_r($cryptoCurrency);exit;
 
         $cryptoArr = ['BTC','ETH'];
         $currencyArr = ['USD','CAD'];
@@ -86,17 +86,35 @@ class FIltersController extends Controller
                 {
                     foreach ($value as $crypto => $data)
                     {
-                        if($data->buydata != 0)
-                        {
-                            $buyPrice = $data->buydata;
+                        if($cryptoCurrency == 'all') {
 
-                            $buyArr['price'] = $data->buydata;
-                            $buyArr['base'] = $data->base;
-                            $buyArr['currency'] = $data->currency;
-                            $buyArr['name'] = $exchangeArr->name;
-                            $buyArr['timestamp'] = $val->created_at;
+                            if($data->buydata != 0)
+                            {
+                                $buyPrice = $data->buydata;
 
-                            $finalBuyArr[] = $buyArr;
+                                $buyArr['price'] = $data->buydata;
+                                $buyArr['base'] = $data->base;
+                                $buyArr['currency'] = $data->currency;
+                                $buyArr['name'] = $exchangeArr->name;
+                                $buyArr['timestamp'] = $val->created_at;
+
+                                $finalBuyArr[] = $buyArr;
+                            }
+                        } else {
+
+                            if($data->buydata != 0 AND $cryptoCurrency == $crypto)
+                            {
+                                $buyPrice = $data->buydata;
+
+                                $buyArr['price'] = $data->buydata;
+                                $buyArr['base'] = $data->base;
+                                $buyArr['currency'] = $data->currency;
+                                $buyArr['name'] = $exchangeArr->name;
+                                $buyArr['timestamp'] = $val->created_at;
+
+                                $finalBuyArr[] = $buyArr;
+                            }
+
                         }
                     }
                 }
@@ -119,16 +137,34 @@ class FIltersController extends Controller
                 {
                     foreach ($value as $crypto => $data)
                     {
-                        if($data->selldata != 0)
-                        {
-                            $sellPrice = $data->selldata;
-                            $sellArr['price'] = $data->selldata;
-                            $sellArr['base'] = $data->base;
-                            $sellArr['currency'] = $data->currency;
-                            $sellArr['name'] = $exchangeArr->name;
-                            $sellArr['timestamp'] = $val->created_at;
+                        if($cryptoCurrency == 'all') {
 
-                            $finalSellArr[] = $sellArr;
+                            if($data->selldata != 0)
+                            {
+                                $sellPrice = $data->selldata;
+                                $sellArr['price'] = $data->selldata;
+                                $sellArr['base'] = $data->base;
+                                $sellArr['currency'] = $data->currency;
+                                $sellArr['name'] = $exchangeArr->name;
+                                $sellArr['timestamp'] = $val->created_at;
+
+                                $finalSellArr[] = $sellArr;
+
+                            }
+                        } else {
+
+                            if($data->selldata != 0 AND $cryptoCurrency == $crypto)
+                            {
+                                $sellPrice = $data->selldata;
+                                $sellArr['price'] = $data->selldata;
+                                $sellArr['base'] = $data->base;
+                                $sellArr['currency'] = $data->currency;
+                                $sellArr['name'] = $exchangeArr->name;
+                                $sellArr['timestamp'] = $val->created_at;
+
+                                $finalSellArr[] = $sellArr;
+
+                            }
 
                         }
                     }   
@@ -210,7 +246,7 @@ class FIltersController extends Controller
                  
             }
         }
-    
+    //exit;
         return response()->json([
                 'data' => $finalArr,
                 'from' => $fromCurrency,
