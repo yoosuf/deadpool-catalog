@@ -33,7 +33,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        parent::report($e);
+        // parent::report($e);
+
+        $error = parent::render($request, $e);
+        return $this->response($error, $e);
     }
 
     /**
@@ -46,5 +49,22 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $e)
     {
         return parent::render($request, $e);
+    }
+
+
+         /**
+     * @param $error
+     * @param $exception
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function response($error, $exception)
+    {
+        return response()->json([
+            'error' => [
+                'code' => $error->getStatusCode(),
+                'message' => class_basename( $exception )  . ( ( $message = $exception->getMessage() ) ? ': ' . $exception->getMessage() : '.' ),
+            ]
+        ]);
+
     }
 }
