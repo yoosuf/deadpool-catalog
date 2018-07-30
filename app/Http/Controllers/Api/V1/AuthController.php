@@ -46,7 +46,7 @@ class AuthController extends BaseController
     /**
      * Authenticate a user and return the token if the provided credentials are correct.
      * 
-     * @param  \App\Admin   $user 
+     * @param  \App\User   $user 
      * @return mixed
      */
     public function authenticate(User $user) {
@@ -55,7 +55,7 @@ class AuthController extends BaseController
             'password'  => 'required'
         ]);
         // Find the user by email
-        $user = Admin::where('email', $this->request->input('email'))->first();
+        $user = User::where('email', $this->request->input('email'))->first();
         if (!$user) {
             // You wil probably have some sort of helpers or whatever
             // to make sure that you have the same response format for
