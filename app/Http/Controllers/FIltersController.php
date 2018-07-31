@@ -52,9 +52,10 @@ class FIltersController extends Controller
         $amount = $request->get('amount');
         $fromCurrency = $request->get('buy_currency');
         $toCurrency = $request->get('sell_currency');
-        $cryptoCurrency = $request->get('crypto');
         $withFee = $request->get('fee');
         $exchanges = $request->get('exchanges');
+
+        $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
 
     
         if($exchanges == 'all'){
@@ -67,11 +68,13 @@ class FIltersController extends Controller
         } else {
 
             $exchanges = explode(',',$exchanges);
+
+            $limit = count($exchanges);
             
             $fromExchangeSql = DB::table('exchange_logs')
             ->whereIn('exchange_id', $exchanges)
             ->latest()
-            ->limit(3)
+            ->limit($limit)
             ->get();
         }
 
@@ -116,7 +119,8 @@ class FIltersController extends Controller
                             }
                         } else {
 
-                            if($data->buydata != 0 AND $cryptoCurrency == $crypto)
+        
+                            if($data->buydata != 0 AND in_array($crypto,$cryptoCurrency))
                             {
                                 $buyPrice = $data->buydata;
 
@@ -167,7 +171,7 @@ class FIltersController extends Controller
                             }
                         } else {
 
-                            if($data->selldata != 0 AND $cryptoCurrency == $crypto)
+                            if($data->selldata != 0 AND in_array($crypto,$cryptoCurrency))
                             {
                                 $sellPrice = $data->selldata;
                                 $sellArr['price'] = $data->selldata;
