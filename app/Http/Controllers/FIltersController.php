@@ -54,17 +54,31 @@ class FIltersController extends Controller
         $toCurrency = $request->get('sell_currency');
         $cryptoCurrency = $request->get('crypto');
         $withFee = $request->get('fee');
+        $exchanges = $request->get('exchanges');
 
-        
-        $fromExchangeSql = DB::table('exchange_logs')
-        ->latest()
-        ->limit(3)
-        ->get();
+    
+        if($exchanges == 'all'){
 
-        //print_r($cryptoCurrency);exit;
+            $fromExchangeSql = DB::table('exchange_logs')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        } else {
+
+            $exchanges = explode(',',$exchanges);
+            
+            $fromExchangeSql = DB::table('exchange_logs')
+            ->whereIn('exchange_id', $exchanges)
+            ->latest()
+            ->limit(3)
+            ->get();
+        }
 
         $cryptoArr = ['BTC','ETH'];
         $currencyArr = ['USD','CAD'];
+
+        $exchange = ['Coinbase','Kraken'];
 
         $toExchangeSql = $fromExchangeSql;
     
@@ -250,7 +264,7 @@ class FIltersController extends Controller
         }
 
         // print_r($finalArr);exit;
-    //exit;
+
         return response()->json([
                 'data' => $finalArr,
                 'from' => $fromCurrency,
