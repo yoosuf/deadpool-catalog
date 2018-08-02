@@ -50,14 +50,15 @@ class FIltersController extends Controller
         $apiKey = 'access_key=1b48ca80e794b1efaedb364f3834957c';
 
         $amount = $request->get('amount');
-        $fromCurrency = $request->get('buy_currency');
-        $toCurrency = $request->get('sell_currency');
+        $fromCurrency = $request->get('currency');
+        //$toCurrency = $request->get('sell_currency');
         $withFee = $request->get('fee');
         $exchanges = $request->get('exchanges');
+        //$countries = $request->get('countries');
 
         $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
 
-    
+        
         if($exchanges == 'all'){
 
             $fromExchangeSql = DB::table('exchange_logs')
@@ -67,20 +68,19 @@ class FIltersController extends Controller
 
         } else {
 
-            $exchanges = explode(',',$exchanges);
+            $exchangesArr = explode(',',$exchanges);
 
-            $limit = count($exchanges);
+            $limit = count($exchangesArr);
             
             $fromExchangeSql = DB::table('exchange_logs')
-            ->whereIn('exchange_id', $exchanges)
+            ->whereIn('exchange_id', $exchangesArr)
             ->latest()
             ->limit($limit)
             ->get();
         }
 
         $cryptoArr = ['BTC','ETH'];
-        $currencyArr = ['USD','CAD'];
-
+        $fromCurrencyArr = explode(',',$fromCurrency);
         $exchange = ['Coinbase','Kraken'];
 
         $toExchangeSql = $fromExchangeSql;
@@ -99,7 +99,7 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-                if($key == $fromCurrency)
+                if(in_array ($key, $fromCurrencyArr))
                 {
                     foreach ($value as $crypto => $data)
                     {
@@ -139,8 +139,7 @@ class FIltersController extends Controller
             }
         }
 
-       // print_r($finalBuyArr);exit;
-
+       
         
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
@@ -151,7 +150,7 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-                if($key == $toCurrency)
+                if(in_array ($key, $fromCurrencyArr))
                 {
                     foreach ($value as $crypto => $data)
                     {
@@ -190,7 +189,11 @@ class FIltersController extends Controller
             }
         }
 
-        //print_r($finalSellArr);exit;
+        // print_r($finalBuyArr);
+        // echo '-----';
+        // print_r($finalSellArr);
+
+        // exit;
 
         $trimedSellArr = $this->purifyArray($finalSellArr);
 
@@ -201,21 +204,30 @@ class FIltersController extends Controller
             ->limit(3)
             ->get();
 
-        foreach ($currency_layer as $id => $value) 
-        {
-            if($value->iso == $toCurrency)
-            {
-                $ratesArr = json_decode($value->other_conversion_values);
-            }
-        }
+        $currencyArr = array();
+
+        // foreach ($fromCurrency as $key => $value) 
+        // {
+        //     foreach ($fromCurrency as $k => $v) 
+        //     {
+        //         //$currencyArr[] = 
+        //     }
+        // }
+        //print_r($currency_layer);exit;
+
+        // foreach ($currency_layer as $id => $value) 
+        // {
+        //     if($value->iso == $toCurrency)
+        //     {
+        //         $ratesArr = json_decode($value->other_conversion_values);
+        //     }
+        // }
 
        // print_r($trimedBuyArr);exit;
 
        //$calculatedVal = 0;
 
-        $keystr = $toCurrency.$fromCurrency;
-
-        $rate = $ratesArr->data->$keystr;
+       
 
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
 
@@ -238,41 +250,49 @@ class FIltersController extends Controller
                 $sellbase = $trimedSellArr[$x]['base'];
                 $selcurr = $trimedSellArr[$x]['currency'];
 
+
+                foreach ($currency_layer as $id => $value) 
+                {
+                    if($value->iso == $buyCurr)
+                    {
+                        $ratesArr = json_decode($value->other_conversion_values);
+                    }
+                }
+
                 //echo $withFee;
 
                 if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
                 {
+                   $keystr = $buyCurr.$selcurr;
+
+                    $rate = $ratesArr->data->$keystr;
+
+                    //echo $buyCurr.'---'.$selcurr.'/';
                  
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
-                    $convertedVal = $val*$rate;
+                    $convertedVal = $val/$rate;
                     $calculatedVal = $convertedVal - $amount;
 
-                
                     $percentage =  ($calculatedVal/$amount)*100;
-
                     $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
 
+                    $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
+                    $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
 
-                    //echo $percentage.'/';
-                    //echo $buyExchange.'-'.$sellExchange.'|'.$buybase.'-'.$sellbase.'/';
-
-                    $array[$sellExchange][$sellbase] = $trimedSellArr[$x];
-                    $array[$sellExchange][$sellbase]['profit'] = number_format((float)$percentage, 2, '.', '');
-
-                    $finalArr[$buyExchange][$buybase]['buy'] = $trimedBuyArr[$i];
-                    $finalArr[$buyExchange][$buybase]['sell'] = $array;
+                    $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
+                    $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
 
                }
                  
             }
         }
-
-        // print_r($finalArr);exit;
+//exit;
+         //print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
                 'from' => $fromCurrency,
-                'to' => $toCurrency
+                //'to' => $toCurrency
         ]);
                 
     }

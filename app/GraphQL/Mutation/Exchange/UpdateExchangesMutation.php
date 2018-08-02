@@ -32,7 +32,8 @@ class UpdateExchangesMutation extends Mutation
         return [
             'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
-            'description' => ['name' => 'description', 'type' => Type::string()]
+            'description' => ['name' => 'description', 'type' => Type::string()],
+            'is_active' => ['name' => 'is_active', 'type' => Type::boolean()]
         ];
     }
 
