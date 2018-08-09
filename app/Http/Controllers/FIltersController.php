@@ -44,21 +44,8 @@ class FIltersController extends Controller
         return $newArray;
     }
 
-   
-    public function calculateData(Request $request)
-    {
-        $apiKey = 'access_key=1b48ca80e794b1efaedb364f3834957c';
+    private function exchangeFilter($exchanges){
 
-        $amount = $request->get('amount');
-        $fromCurrency = $request->get('currency');
-        //$toCurrency = $request->get('sell_currency');
-        $withFee = $request->get('fee');
-        $exchanges = $request->get('exchanges');
-        //$countries = $request->get('countries');
-
-        $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
-
-        
         if($exchanges == 'all'){
 
             $fromExchangeSql = DB::table('exchange_logs')
@@ -69,7 +56,6 @@ class FIltersController extends Controller
         } else {
 
             $exchangesArr = explode(',',$exchanges);
-
             $limit = count($exchangesArr);
             
             $fromExchangeSql = DB::table('exchange_logs')
@@ -78,20 +64,11 @@ class FIltersController extends Controller
             ->limit($limit)
             ->get();
         }
+        return $fromExchangeSql;
+    }
 
-        $cryptoArr = ['BTC','ETH'];
-        $fromCurrencyArr = explode(',',$fromCurrency);
-        $exchange = ['Coinbase','Kraken'];
+    public function fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency){
 
-        $toExchangeSql = $fromExchangeSql;
-    
-        $buyPrice = 0;
-        $sellPrice = 0;
-
-        $finalBuyArr = array();
-        $finalSellArr = array();
-        $finalArr = array();
-        
         foreach ($fromExchangeSql as $k => $val)
         {
             $buyArr = array();
@@ -99,7 +76,7 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-                if(in_array ($key, $fromCurrencyArr))
+                if($key == $fromCurrencyArr[0])
                 {
                     foreach ($value as $crypto => $data)
                     {
@@ -119,7 +96,6 @@ class FIltersController extends Controller
                             }
                         } else {
 
-        
                             if($data->buydata != 0 AND in_array($crypto,$cryptoCurrency))
                             {
                                 $buyPrice = $data->buydata;
@@ -139,9 +115,12 @@ class FIltersController extends Controller
             }
         }
 
-       
-        
-        $trimedBuyArr = $this->purifyArray($finalBuyArr);
+        return $finalBuyArr;
+    }
+
+    public function fillSellData($toExchangeSql, $fromCurrencyArr, $cryptoCurrency){
+
+        $fromCurrencyArr = count($fromCurrencyArr) > 1 ? $fromCurrencyArr[1] : $fromCurrencyArr[0];
 
         foreach ($toExchangeSql as $k => $val)
         {
@@ -150,7 +129,7 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-                if(in_array ($key, $fromCurrencyArr))
+                if($key == $fromCurrencyArr)
                 {
                     foreach ($value as $crypto => $data)
                     {
@@ -188,68 +167,90 @@ class FIltersController extends Controller
                }
             }
         }
+        return $finalSellArr;
+    }
 
-        // print_r($finalBuyArr);
-        // echo '-----';
-        // print_r($finalSellArr);
-
-        // exit;
-
-        $trimedSellArr = $this->purifyArray($finalSellArr);
+    public function getCurrencyLayerData(){
 
         $currency_layer = DB::table('currencies')
-            ->join('currency_values', 'currencies.id', '=', 'currency_values.currency_id')
-            ->select('currencies.iso', 'currency_values.other_conversion_values', 'currency_values.created_at')
-            ->latest()
-            ->limit(3)
-            ->get();
+        ->join('currency_values', 'currencies.id', '=', 'currency_values.currency_id')
+        ->select('currencies.iso', 'currency_values.other_conversion_values', 'currency_values.created_at')
+        ->latest()
+        ->limit(3)
+        ->get();
 
+        return $currency_layer;
+    }
+
+    private function prepareNextUrls($fromCurrencyArr, $crypto, $amount, $withFee, $exchanges, $url){
+
+        foreach ($fromCurrencyArr as $key1 => $currency1) {
+
+            foreach ($fromCurrencyArr as $key2 => $currency2) {
+
+                if($currency1 != $currency2){
+
+                    $urlsArr[$currency1.'-'.$currency2] = $url.'?currency='.$currency1.','.$currency2.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
+                }
+            }
+        }
+
+        return $urlsArr;
+    }
+
+   
+    public function calculateData(Request $request)
+    {
+        $amount = $request->get('amount');
+        $fromCurrency = $request->get('currency');
+        $withFee = $request->get('fee');
+        $exchanges = $request->get('exchanges');
+        $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
+        $fromCurrencyArr = explode(',',$fromCurrency);
+        //$countries = $request->get('countries');
+        //$toCurrency = $request->get('sell_currency');
+
+       // print_r($fromCurrencyArr);exit;
+
+        $buyPrice = 0;
+        $sellPrice = 0;
+
+        $finalBuyArr = array();
+        $finalSellArr = array();
+        $finalArr = array();
         $currencyArr = array();
+        $urlsArr = array();
 
-        // foreach ($fromCurrency as $key => $value) 
-        // {
-        //     foreach ($fromCurrency as $k => $v) 
-        //     {
-        //         //$currencyArr[] = 
-        //     }
-        // }
-        //print_r($currency_layer);exit;
+        // exchange filter
+        $fromExchangeSql = $this->exchangeFilter($exchanges);
 
-        // foreach ($currency_layer as $id => $value) 
-        // {
-        //     if($value->iso == $toCurrency)
-        //     {
-        //         $ratesArr = json_decode($value->other_conversion_values);
-        //     }
-        // }
+        $toExchangeSql = $fromExchangeSql;
+    
+        // filling the buy array
+        $finalBuyArr = $this->fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency);
+        $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
-       // print_r($trimedBuyArr);exit;
+        // filling the sell array
+        $finalSellArr = $this->fillSellData($toExchangeSql, $fromCurrencyArr, $cryptoCurrency);
+        $trimedSellArr = $this->purifyArray($finalSellArr);
 
-       //$calculatedVal = 0;
+        // get currency layer data
+        $currency_layer = $this->getCurrencyLayerData();
 
-       
 
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
 
             $buybase = $trimedBuyArr[$i]['base'];
-            $buyExchange = $trimedBuyArr[$i]['name'];
-                
+            $buyExchange = $trimedBuyArr[$i]['name'];  
             $buyCurr = $trimedBuyArr[$i]['currency'];
 
             $array = [];
-            //$calculatedValWithFees = 0;
-
-            //$val = 0;
             
-            //$calculatedVal = 0;
-
             for ($x=0; $x < count($trimedSellArr) ; $x++) {
                 
-
                 $sellExchange = $trimedSellArr[$x]['name'];
                 $sellbase = $trimedSellArr[$x]['base'];
                 $selcurr = $trimedSellArr[$x]['currency'];
-
 
                 foreach ($currency_layer as $id => $value) 
                 {
@@ -263,12 +264,9 @@ class FIltersController extends Controller
 
                 if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
                 {
-                   $keystr = $buyCurr.$selcurr;
-
+                    $keystr = $buyCurr.$selcurr;
                     $rate = $ratesArr->data->$keystr;
 
-                    //echo $buyCurr.'---'.$selcurr.'/';
-                 
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                     $convertedVal = $val/$rate;
                     $calculatedVal = $convertedVal - $amount;
@@ -283,16 +281,19 @@ class FIltersController extends Controller
                     $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
 
                }
-                 
             }
         }
-//exit;
-         //print_r($finalArr);exit;
+
+        // prepare next urls
+        if(count($fromCurrencyArr) > 1){
+            $urlsArr = $this->prepareNextUrls($fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url());
+        }
 
         return response()->json([
                 'data' => $finalArr,
-                'from' => $fromCurrency,
-                //'to' => $toCurrency
+                'meta' => array(
+                    'links'=>$urlsArr
+                ),
         ]);
                 
     }
