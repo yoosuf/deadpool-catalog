@@ -291,9 +291,8 @@ class FIltersController extends Controller
 
         return response()->json([
                 'data' => $finalArr,
-                'meta' => array(
-                    'links'=>$urlsArr
-                ),
+                'meta' => array('links'=>$urlsArr),
+                'number' => (count($urlsArr) > 1) ? 1: 0
         ]);
                 
     }
