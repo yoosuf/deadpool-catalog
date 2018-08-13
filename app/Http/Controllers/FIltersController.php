@@ -207,7 +207,7 @@ class FIltersController extends Controller
 
         $sellcurrency = array();
 
-        $crypto = explode(',', $cryptostr);
+        $crypto = ($cryptostr== 'all') ? 'all' : explode(',', $cryptostr);
 
         
 
