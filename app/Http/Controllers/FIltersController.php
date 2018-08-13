@@ -69,6 +69,8 @@ class FIltersController extends Controller
 
     public function fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency){
 
+        $fromCurrencyArr = is_array($fromCurrencyArr) ? $fromCurrencyArr[0]: $fromCurrencyArr;
+
         foreach ($fromExchangeSql as $k => $val)
         {
             $buyArr = array();
@@ -76,7 +78,7 @@ class FIltersController extends Controller
 
             foreach ($exchangeArr->rates as $key => $value) 
             {
-                if($key == $fromCurrencyArr[0])
+                if($key == $fromCurrencyArr)
                 {
                     foreach ($value as $crypto => $data)
                     {
@@ -182,20 +184,119 @@ class FIltersController extends Controller
         return $currency_layer;
     }
 
-    private function prepareNextUrls($fromCurrencyArr, $crypto, $amount, $withFee, $exchanges, $url){
+    // foreach ($currency_layer as $id => $value) 
+    // {
+    //     if($value->iso == $currency1)
+    //     {
+    //         $ratesArr = json_decode($value->other_conversion_values);
+    //     }
+    // }
+
+    // $keystr = $currency1.$currency2;
+    // $rate = $ratesArr->data->$keystr;
+
+    // $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
+    // $convertedVal = $val/$rate;
+    // $calculatedVal = $convertedVal - $amount;
+
+    // $percentage =  ($calculatedVal/$amount)*100;
+
+    private function prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $crypto, $amount, $withFee, $exchanges, $url){
+
+        $currency_layer = $this->getCurrencyLayerData();
+
+        $sellcurrency = array();
+
+        // print_r($fromCurrencyArr);
+        // exit;
 
         foreach ($fromCurrencyArr as $key1 => $currency1) {
 
             foreach ($fromCurrencyArr as $key2 => $currency2) {
 
                 if($currency1 != $currency2){
+                    
 
-                    $urlsArr[$currency1.'-'.$currency2] = $url.'?currency='.$currency1.','.$currency2.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
-                }
+                    $resBuyData = $this->fillBuyData($fromExchangeSql, $currency1, $crypto);
+
+                    // echo $currency2;
+                    // echo '/';
+                    $sellcurrency = array();
+
+                    $sellcurrency[] = $currency2; 
+                  //  print_r($sellcurrency);
+                    $resSellData = $this->fillSellData($fromExchangeSql, $sellcurrency, $crypto);
+                    
+                    for ($i=0; $i < count($resBuyData) ; $i++) { 
+
+                        $buybase = $resBuyData[$i]['base'];
+                        $buyExchange = $resBuyData[$i]['name'];  
+                        $buyCurr = $resBuyData[$i]['currency'];
+            
+                        $array = [];
+                        
+                        for ($x=0; $x < count($resSellData) ; $x++) {
+                            
+                            $sellExchange = $resSellData[$x]['name'];
+                            $sellbase = $resSellData[$x]['base'];
+                            $selcurr = $resSellData[$x]['currency'];
+            
+                            foreach ($currency_layer as $id => $value) 
+                            {
+                                if($value->iso == $buyCurr)
+                                {
+                                    $ratesArr = json_decode($value->other_conversion_values);
+                                }
+                            }
+
+
+                           // print_r($resSellData);
+            
+                            //echo $withFee;
+
+//                             echo $buyCurr.'-'.$selcurr;
+// echo '/';
+            
+                            if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
+                            {
+                                $keystr = $buyCurr.$selcurr;
+                                $rate = $ratesArr->data->$keystr;
+            
+                                $val = (floatval($amount) / floatval($resBuyData[$i]['price'])) * floatval($resSellData[$x]['price']);
+                                $convertedVal = $val/$rate;
+                                $calculatedVal = $convertedVal - $amount;
+            
+                                $percentage =  ($calculatedVal/$amount)*100;
+                                //$percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
+            
+
+                                // $array[$sellExchange][$sellbase][$selcurr] = $resSellData[$x];
+                                // $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
+                                //$profitArr = 
+                                $finalArr['profit'][$buyCurr.'-'.$selcurr][] = number_format((float)$percentage, 2, '.', '');
+                                $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
+                                //$finalArr[$buybase][$buyCurr]['sell'] = $array;
+            
+                           }
+                        }
+                    }
+
+
+                    //$urlsArr[$currency1.'-'.$currency2] = $url.'?currency='.$currency1.','.$currency2.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
+               }
             }
         }
 
-        return $urlsArr;
+        $urlArray = [];
+
+        foreach ($finalArr['profit'] as $key => $value) {
+            rsort($value);
+            $urlArray[$key]['url'] = $finalArr['url'][$key];
+            $urlArray[$key]['profit'] = $value[0];
+        }
+
+      
+     return $urlArray;
     }
 
    
@@ -284,9 +385,11 @@ class FIltersController extends Controller
             }
         }
 
-        // prepare next urls
+       //print_r($finalArr);exit;
+
+       // prepare next urls
         if(count($fromCurrencyArr) > 1){
-            $urlsArr = $this->prepareNextUrls($fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url());
+            $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency, $amount, $withFee, $exchanges, $request->url());        
         }
 
         return response()->json([
