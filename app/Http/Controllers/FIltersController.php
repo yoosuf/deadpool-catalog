@@ -201,14 +201,15 @@ class FIltersController extends Controller
 
     // $percentage =  ($calculatedVal/$amount)*100;
 
-    private function prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $crypto, $amount, $withFee, $exchanges, $url){
+    private function prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $cryptostr, $amount, $withFee, $exchanges, $url){
 
         $currency_layer = $this->getCurrencyLayerData();
 
         $sellcurrency = array();
 
-        // print_r($fromCurrencyArr);
-        // exit;
+        $crypto = explode(',', $cryptostr);
+
+        
 
         foreach ($fromCurrencyArr as $key1 => $currency1) {
 
@@ -218,7 +219,7 @@ class FIltersController extends Controller
                     
 
                     $resBuyData = $this->fillBuyData($fromExchangeSql, $currency1, $crypto);
-
+                    
                     // echo $currency2;
                     // echo '/';
                     $sellcurrency = array();
@@ -274,7 +275,7 @@ class FIltersController extends Controller
                                 // $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                                 //$profitArr = 
                                 $finalArr['profit'][$buyCurr.'-'.$selcurr][] = number_format((float)$percentage, 2, '.', '');
-                                $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
+                                $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$cryptostr.'&fee='.$withFee.'&exchanges='.$exchanges;
                                 //$finalArr[$buybase][$buyCurr]['sell'] = $array;
             
                            }
@@ -286,6 +287,7 @@ class FIltersController extends Controller
                }
             }
         }
+       
 
         $urlArray = [];
 
@@ -389,8 +391,11 @@ class FIltersController extends Controller
 
        // prepare next urls
         if(count($fromCurrencyArr) > 1){
-            $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency, $amount, $withFee, $exchanges, $request->url());        
+            
+            $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url());        
         }
+
+        // print_r($urlsArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
