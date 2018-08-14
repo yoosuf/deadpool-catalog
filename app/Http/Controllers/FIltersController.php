@@ -268,7 +268,7 @@ class FIltersController extends Controller
                                 $calculatedVal = $convertedVal - $amount;
             
                                 $percentage =  ($calculatedVal/$amount)*100;
-                                //$percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
+                                $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
             
 
                                 // $array[$sellExchange][$sellbase][$selcurr] = $resSellData[$x];
