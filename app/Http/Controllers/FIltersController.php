@@ -310,14 +310,12 @@ class FIltersController extends Controller
             ->whereJsonContains('preference->name', $buyExchange)
             // ->where('created_at', '>',$formatted_date)
             ->latest()
-            ->orderBy('id', 'asc')
             ->limit(12)
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
             // ->where('created_at', '>',$formatted_date
             ->latest()
-            ->orderBy('id', 'asc')
             ->limit(12)
             ->get();
 
@@ -356,8 +354,8 @@ class FIltersController extends Controller
          }
 
         //  $chatrsArr['data'] = $percentArr;
-         $chatrsArr['time'] = $timeArr;
-         $chatrsArr['profits'] = $percentArr;
+         $chatrsArr['time'] = array_reverse($timeArr);
+         $chatrsArr['profits'] = array_reverse($percentArr);
 
 
          return $chatrsArr;
