@@ -293,7 +293,7 @@ class FIltersController extends Controller
      return $urlArray;
     }
 
-    public function getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr,$rate){
+    public function getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr,$rate,$withFee){
 
         $baseBuy[]= $buybase;
         $baseSell[]= $sellbase;
@@ -348,6 +348,7 @@ class FIltersController extends Controller
                 $calculatedVal = $convertedVal - $amount;
 
                 $percentage =  ($calculatedVal/$amount)*100;
+                $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
                 $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                
             }
@@ -436,7 +437,7 @@ class FIltersController extends Controller
                     $keystr = $buyCurr.$selcurr;
                     $rate = $ratesArr->data->$keystr;
 
-                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate);
+                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee);
                     //exit;
                     
 
