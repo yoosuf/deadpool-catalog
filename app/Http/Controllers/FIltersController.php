@@ -310,11 +310,13 @@ class FIltersController extends Controller
             ->whereJsonContains('preference->name', $buyExchange)
             // ->where('created_at', '>',$formatted_date)
             ->latest()
+            ->orderBy('id', 'asc')
             ->limit(12)
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
             // ->where('created_at', '>',$formatted_date)
+            ->orderBy('id', 'asc')
             ->latest()
             ->limit(12)
             ->get();
