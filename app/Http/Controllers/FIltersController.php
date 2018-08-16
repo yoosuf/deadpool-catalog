@@ -308,15 +308,15 @@ class FIltersController extends Controller
 
         $buyData = DB::table('exchange_logs')
             ->whereJsonContains('preference->name', $buyExchange)
-            ->where('created_at', '>',$formatted_date)
+            // ->where('created_at', '>',$formatted_date)
             ->latest()
-            // ->limit(3)
+            ->limit(12)
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
-            ->where('created_at', '>',$formatted_date)
+            // ->where('created_at', '>',$formatted_date)
             ->latest()
-            // ->limit(3)
+            ->limit(12)
             ->get();
 
          $resBuyData = $this->fillBuyData($buyData, $buyCurr, $baseBuy);
