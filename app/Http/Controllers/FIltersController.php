@@ -249,14 +249,6 @@ class FIltersController extends Controller
                                     $ratesArr = json_decode($value->other_conversion_values);
                                 }
                             }
-
-
-                           // print_r($resSellData);
-            
-                            //echo $withFee;
-
-//                             echo $buyCurr.'-'.$selcurr;
-// echo '/';
             
                             if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
                             {
@@ -301,6 +293,75 @@ class FIltersController extends Controller
      return $urlArray;
     }
 
+    public function getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr,$rate){
+
+        $baseBuy[]= $buybase;
+        $baseSell[]= $sellbase;
+
+        $currSell[]= $selcurr;
+
+        $date = new \DateTime();
+        $date->modify('-24 hours');
+        $formatted_date = $date->format('Y-m-d H:i:s');
+
+        // echo date('Y-m-d H:i:s');exit;
+
+        $buyData = DB::table('exchange_logs')
+            ->whereJsonContains('preference->name', $buyExchange)
+            ->where('created_at', '>',$formatted_date)
+            ->latest()
+            // ->limit(3)
+            ->get();
+        $sellData = DB::table('exchange_logs')
+            ->where('preference->name', $sellExchange)
+            ->where('created_at', '>',$formatted_date)
+            ->latest()
+            // ->limit(3)
+            ->get();
+
+         $resBuyData = $this->fillBuyData($buyData, $buyCurr, $baseBuy);
+
+         $resSellData = $this->fillSellData($sellData, $currSell, $baseSell);
+
+        
+        
+
+         $percentArr = array();
+         $chatrsArr = array();
+         $timeArr = array();
+         foreach ($resBuyData as $id1 => $value1) {
+
+           // echo $value1['timestamp'];
+            $time = date('H:i', strtotime($value1['timestamp']));
+            $timeArr[$id1] = $time;
+
+            $buyval = $value1['price'];
+            foreach ($resSellData as $id2 => $value2) {
+
+                $sellval = $resSellData[$id1]['price'];
+
+                //echo $resSellData[$id1]['timestamp'];
+                $amount = 100;
+
+                $val = ($amount/ floatval($buyval)) * floatval($sellval);
+                $convertedVal = $val/$rate;
+                $calculatedVal = $convertedVal - $amount;
+
+                $percentage =  ($calculatedVal/$amount)*100;
+                $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+               
+            }
+         }
+
+        //  $chatrsArr['data'] = $percentArr;
+         $chatrsArr['time'] = $timeArr;
+         $chatrsArr['profits'] = $percentArr;
+
+
+         return $chatrsArr;
+        
+    }
+
    
     public function calculateData(Request $request)
     {
@@ -323,6 +384,11 @@ class FIltersController extends Controller
         $finalArr = array();
         $currencyArr = array();
         $urlsArr = array();
+
+       
+
+        // print_r($users);
+        // exit;
 
         // exchange filter
         $fromExchangeSql = $this->exchangeFilter($exchanges);
@@ -370,6 +436,10 @@ class FIltersController extends Controller
                     $keystr = $buyCurr.$selcurr;
                     $rate = $ratesArr->data->$keystr;
 
+                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate);
+                    //exit;
+                    
+
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                     $convertedVal = $val/$rate;
                     $calculatedVal = $convertedVal - $amount;
@@ -379,9 +449,11 @@ class FIltersController extends Controller
 
                     $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
                     $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
+                    $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
 
                     $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
                     $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
+                    
 
                }
             }
