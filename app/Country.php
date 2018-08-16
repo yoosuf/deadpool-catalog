@@ -15,9 +15,6 @@ class Country extends Model
 
     protected $casts = [
         'preference' => 'array',
-        'created_at' => 'date', 
-        'updated_at' => 'date', 
-
     ];
 
     public function currencies()

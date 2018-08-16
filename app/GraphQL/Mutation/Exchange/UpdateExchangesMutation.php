@@ -23,8 +23,7 @@ class UpdateExchangesMutation extends Mutation
     public function rules()
     {
         return [
-            'name' => 'required|unique:exchanges',
-            'description' => 'required',
+            'name' => 'required|unique:exchanges'
         ];
     }
 
@@ -33,7 +32,8 @@ class UpdateExchangesMutation extends Mutation
         return [
             'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
-            'description' => ['name' => 'description', 'type' => Type::string()]
+            'description' => ['name' => 'description', 'type' => Type::string()],
+            'is_active' => ['name' => 'is_active', 'type' => Type::boolean()]
         ];
     }
 

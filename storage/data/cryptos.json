@@ -1,5 +1,11 @@
 [
     {
+      "name": "All",
+      "code": "all",
+      "symbol": "all",
+      "is_active" : true
+    },
+    {
       "name": "Bitcoin",
       "code": "BTC",
       "symbol": "BTC",
