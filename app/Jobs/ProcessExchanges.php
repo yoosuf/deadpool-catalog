@@ -100,7 +100,7 @@ class ProcessExchanges extends Job
                             $buyPrice = $krakenResult['info']['a'][0];
                             $sellPrice = $krakenResult['info']['b'][0];
                         }
-                    } else if($val == 'Cex')
+                    } else if($val == 'CEX')
                     {
                         if ($value == 'CAD' || $crypto == 'LTC') {
                             $buyPrice = 0;
