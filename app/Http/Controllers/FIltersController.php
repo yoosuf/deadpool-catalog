@@ -315,9 +315,9 @@ class FIltersController extends Controller
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
-            // ->where('created_at', '>',$formatted_date)
-            ->orderBy('id', 'asc')
+            // ->where('created_at', '>',$formatted_date
             ->latest()
+            ->orderBy('id', 'asc')
             ->limit(12)
             ->get();
 
