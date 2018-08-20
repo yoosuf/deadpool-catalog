@@ -353,17 +353,15 @@ class FIltersController extends Controller
                 //$percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                 if($percentage > 0){
 
-                    $lossArr[$id1] = '0.00';
+                    $lossArr[$id1] = '0';
                     $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
 
                 }else {
 
-                    $percentArr[$id1] = '0.00';
+                    $percentArr[$id1] = '0';
                     $lossArr[$id1] = number_format((float)$percentage, 2, '.', '');
                 }
 
-               
-                
                
             }
          }
