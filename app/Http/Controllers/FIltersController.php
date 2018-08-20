@@ -350,17 +350,17 @@ class FIltersController extends Controller
 
                 $percentage =  ($calculatedVal/$amount)*100;
 
-                //$percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
-                if($percentage > 0){
+                $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                // if($percentage > 0){
 
-                    $lossArr[$id1] = '0';
-                    $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                //     $lossArr[$id1] = '0';
+                //     $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
 
-                }else {
+                // }else {
 
-                    $percentArr[$id1] = '0';
-                    $lossArr[$id1] = number_format((float)$percentage, 2, '.', '');
-                }
+                //     $percentArr[$id1] = '0';
+                //     $lossArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                // }
 
                
             }
@@ -369,7 +369,7 @@ class FIltersController extends Controller
         //  $chatrsArr['data'] = $percentArr;
          $chatrsArr['time'] = array_reverse($timeArr);
          $chatrsArr['profits'] = array_reverse($percentArr);
-         $chatrsArr['losses'] = array_reverse($lossArr);
+        //  $chatrsArr['losses'] = array_reverse($lossArr);
 
         
 
