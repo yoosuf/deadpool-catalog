@@ -12,12 +12,16 @@ use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use OzdemirBurak\JsonCsv\File\Json;
+use App\Http\Controllers\FIltersController;
+use Carbon\Carbon;
+use DB;
 
 
 class ExchangeLogsController extends Controller
 {
     protected $model;
     private $fractal;
+    private $filter;
 
 
     /**
@@ -29,6 +33,7 @@ class ExchangeLogsController extends Controller
     {
         $this->model = $model;
         $this->fractal = new Manager();
+        $this->filter = new FIltersController();
 
     }
 
@@ -57,11 +62,94 @@ class ExchangeLogsController extends Controller
          * Based on the users request type=csv downloading the data
          */
         if ($request->has('type') && $request->get('type') == "csv") {
-            
-            $historicalData = $exchangeLogs->limit($limit)->get();
+
+            // $historicalData = $exchangeLogs->limit($limit)->get();
+
+            $amount = 100;
+
+            $finalBuyArr = array();
+            $finalSellArr = array();
+           
+
+            $historicalBuyData = DB::table("exchange_logs")
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(30))
+                    ->get();
+
+            $historicalSellData = DB::table("exchange_logs")
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(30))
+                    ->get();
+
+
+            foreach ($historicalBuyData as $k => $val)
+            {
+                $buyArr = array();
+                $exchangeArr = json_decode($val->preference);
+    
+                foreach ($exchangeArr->rates as $key => $value) 
+                {
+                    // if($key == $fromCurrencyArr)
+                    // {
+                        foreach ($value as $crypto => $data)
+                        {
+                           // if($cryptoCurrency == 'all') {
+    
+                                if($data->buydata != 0)
+                                {
+                                    $buyPrice = $data->buydata;
+    
+                                    $buyArr['price'] = $data->buydata;
+                                    $buyArr['base'] = $data->base;
+                                    $buyArr['currency'] = $data->currency;
+                                    $buyArr['name'] = $exchangeArr->name;
+                                    $buyArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
+    
+                                    $finalBuyArr[] = $buyArr;
+                                }
+                            //}
+                        }
+                   // }
+                }
+            }
 
             
-            $dataArray = $historicalData->toArray();
+
+
+            foreach ($historicalSellData as $k => $val)
+            {
+               // echo $k;
+                $sellArr = array();
+                $exchangeArr = json_decode($val->preference);
+
+                foreach ($exchangeArr->rates as $key => $value) 
+                {
+                    // if($key == $fromCurrencyArr)
+                    // {
+                        foreach ($value as $crypto => $data)
+                        {
+                            //if($cryptoCurrency == 'all') {
+
+                                if($data->selldata != 0)
+                                {
+                                    $sellPrice = $data->selldata;
+                                    $sellArr['price'] = $data->selldata;
+                                    $sellArr['base'] = $data->base;
+                                    $sellArr['currency'] = $data->currency;
+                                    $sellArr['name'] = $exchangeArr->name;
+                                    $sellArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
+
+                                    $finalSellArr[] = $sellArr;
+
+                                }
+                            //}
+                        }   
+                    //}
+                }
+            }
+
+            $currency_layer = $this->filter->getCurrencyLayerData();
+
+            // print_r($currency_layer);
+          // print_r($finalSellArr);exit;
 
             // Set response headers to trigger file download on client side
             header("Content-type: application/csv");
@@ -69,66 +157,93 @@ class ExchangeLogsController extends Controller
 
             $output_file_pointer = fopen('php://output', 'w');
 
-            // Output the CSV headers
+            // // Output the CSV headers
             $headers = array(
-                'Exchange',
-                'Currency',
-                'Crypto',
-                'Buy Price',
-                'Sell Price',
-                'Time',
+                'Timestamp',
+                'Sending exchange',
+                'Receiving Exchange',
+                'Sending currency',
+                'Receiving currency',
+                'Sending crypto',
+                'Receiving crypto',
+                'Sending price',
+                'Receiving price',
+                'Profit'
             );
 
+            //print_r($finalBuyArr);exit;
+
             fputcsv($output_file_pointer, $headers);
-
-            foreach($dataArray as $key => $val) {
-              
-                $preference = is_array($val['preference']) ? $val['preference']['rates'] : json_decode($val['preference'])->rates;
-
                 
-                foreach ($preference as $crypto => $data)
-                {
-                    foreach ($data as $k => $v)
+            foreach ($finalBuyArr as $k1 => $buydata) {
+
+                $buybase = $buydata['base'];
+                $buyExchange = $buydata['name'];  
+                $buyCurr = $buydata['currency'];
+                $buyTime = $buydata['timestamp'];
+
+
+                foreach ($finalSellArr as $k2 => $selldata) {
+
+
+                    $sellExchange = $selldata['name'];
+                    $sellbase = $selldata['base'];
+                    $selcurr = $selldata['currency'];
+                    $sellTime = $selldata['timestamp'];
+
+                    //echo $sellExchange.'/';
+    
+                    foreach ($currency_layer as $id => $value) 
                     {
-                        if(is_array($val['preference']))
+                        if($value->iso == $buyCurr)
                         {
-                            $output = array(
-                                $val['preference']['name'],
-                                $v['currency'],
-                                $v['base'],
-                                $v['buydata'],
-                                $v['selldata'],
-                                $val['created_at']
-                            );
-                            
-                            fputcsv($output_file_pointer, $output);
-                            ob_flush();
-                            flush();
-
-                        } else {
-
-                           // if($v->buydata != 0){
-                                $output = array(
-                                    json_decode($val['preference'])->name,
-                                    $v->currency,
-                                    $v->base,
-                                    $v->buydata,
-                                    $v->selldata,
-                                    $val['created_at']
-                                );
-                            //}
-                            
-                            fputcsv($output_file_pointer, $output);
-                            ob_flush();
-                            flush();
+                            $ratesArr = json_decode($value->other_conversion_values);
                         }
                     }
+
+                    if($buybase == $sellbase AND $buyTime == $sellTime)
+                    {
+                    //echo $sellExchange;
+                    // exit;
+                        $keystr = $buyCurr.$selcurr;
+                        $rate = $ratesArr->data->$keystr;
+
+        
+                        $val = (floatval($amount) / floatval($buydata['price'])) * floatval($selldata['price']);
+                        $convertedVal = $val/$rate;
+                        $calculatedVal = $convertedVal - $amount;
+
+                        $percentage =  ($calculatedVal/$amount)*100;
+
+                        $output = array(
+
+                            $buydata['timestamp'],
+                            $buyExchange,
+                            $sellExchange,
+                            $buyCurr,
+                            $selcurr,
+                            $buybase,
+                            $sellbase,
+                            $buydata['price'],
+                            $selldata['price'],
+                            number_format((float)$percentage, 2, '.', '')
+                            // $val['created_at']
+                        );
+                        
+                        fputcsv($output_file_pointer, $output);
+                        ob_flush();
+                        flush();
+
+                    }
+
                 }
+
             }
 
             fclose($output_file_pointer);
             die;
         }
+       
 
         /**
          * render as JSON
