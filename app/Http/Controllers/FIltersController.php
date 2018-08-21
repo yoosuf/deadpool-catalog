@@ -17,27 +17,11 @@ use DB;
 
 class FIltersController extends Controller
 {
-    /**
-     * Show the profile for the given user.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function getCurrencies()
-    {
-        return response()->json([
-            'name' => 'Abigail',
-            'state' => 'CA'
-        ]);
-    }
-
     public function purifyArray($array)
     {
         $newArray = [];
         foreach ($array as $key => $value) {
-
             if(!empty($value)){
-
                 $newArray[] = $value;
             }
         }
@@ -45,39 +29,41 @@ class FIltersController extends Controller
     }
 
     private function exchangeFilter($exchanges){
-
         if($exchanges == 'all'){
-
             $fromExchangeSql = DB::table('exchange_logs')
-            ->latest()
-            ->limit(3)
-            ->get();
-
+                        ->latest()
+                        ->limit(3)
+                        ->get();
         } else {
-
             $exchangesArr = explode(',',$exchanges);
             $limit = count($exchangesArr);
-            
             $fromExchangeSql = DB::table('exchange_logs')
-            ->whereIn('exchange_id', $exchangesArr)
-            ->latest()
-            ->limit($limit)
-            ->get();
+                        ->whereIn('exchange_id', $exchangesArr)
+                        ->leftJoin('exchanges', 'exchange_logs.exchange_id', '=', 'exchanges.id')
+                        ->latest()
+                        ->limit($limit)
+                        ->get();
         }
+
+        // dd($fromExchangeSql);
         return $fromExchangeSql;
     }
 
     public function fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency){
-
         $fromCurrencyArr = is_array($fromCurrencyArr) ? $fromCurrencyArr[0]: $fromCurrencyArr;
-
         foreach ($fromExchangeSql as $k => $val)
         {
-            $buyArr = array();
-            $exchangeArr = json_decode($val->preference);
+            $buyArr = [];
 
-            foreach ($exchangeArr->rates as $key => $value) 
+            // dd($val);
+
+            $exchangeLogsArr = json_decode($val->preference);
+
+            foreach ($exchangeLogsArr->rates as $key => $value) 
             {
+
+                // dd($exchangeLogsArr);
+
                 if($key == $fromCurrencyArr)
                 {
                     foreach ($value as $crypto => $data)
@@ -87,13 +73,13 @@ class FIltersController extends Controller
                             if($data->buydata != 0)
                             {
                                 $buyPrice = $data->buydata;
-
                                 $buyArr['price'] = $data->buydata;
                                 $buyArr['base'] = $data->base;
                                 $buyArr['currency'] = $data->currency;
-                                $buyArr['name'] = $exchangeArr->name;
+                                $buyArr['name'] = $exchangeLogsArr->name;
+                                $buyArr['url'] = \App\Exchange::where('name', $exchangeLogsArr->name)->first()->preference['url'];
+                                // $buyArr['url'] = is_array($exchangeLogsArr->preference) ? $exchangeLogsArr['preference']['url'] : json_decode($exchangeLogsArr['preference'])->url;
                                 $buyArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
-
                                 $finalBuyArr[] = $buyArr;
                             }
                         } else {
@@ -101,22 +87,20 @@ class FIltersController extends Controller
                             if($data->buydata != 0 AND in_array($crypto,$cryptoCurrency))
                             {
                                 $buyPrice = $data->buydata;
-
                                 $buyArr['price'] = $data->buydata;
                                 $buyArr['base'] = $data->base;
                                 $buyArr['currency'] = $data->currency;
-                                $buyArr['name'] = $exchangeArr->name;
+                                $buyArr['name'] = $exchangeLogsArr->name;
+                                $buyArr['url'] = \App\Exchange::where('name', $exchangeLogsArr->name)->first()->preference['url'];
+                                // $buyArr['linkname'] = $exchangeLogsArr->name;
                                 $buyArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
-
                                 $finalBuyArr[] = $buyArr;
                             }
-
                         }
                     }
                 }
             }
         }
-
         return $finalBuyArr;
     }
 
@@ -126,28 +110,25 @@ class FIltersController extends Controller
 
         foreach ($toExchangeSql as $k => $val)
         {
-            $sellArr = array();
-            $exchangeArr = json_decode($val->preference);
-
-            foreach ($exchangeArr->rates as $key => $value) 
+            $sellArr = [];
+            $exchangeLogsArr = json_decode($val->preference);
+            foreach ($exchangeLogsArr->rates as $key => $value) 
             {
                 if($key == $fromCurrencyArr)
                 {
                     foreach ($value as $crypto => $data)
                     {
                         if($cryptoCurrency == 'all') {
-
                             if($data->selldata != 0)
                             {
                                 $sellPrice = $data->selldata;
                                 $sellArr['price'] = $data->selldata;
                                 $sellArr['base'] = $data->base;
                                 $sellArr['currency'] = $data->currency;
-                                $sellArr['name'] = $exchangeArr->name;
+                                $sellArr['name'] = $exchangeLogsArr->name;
+                                $buyArr['url'] = \App\Exchange::where('name', $exchangeLogsArr->name)->first()->preference['url'];
                                 $sellArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
-
                                 $finalSellArr[] = $sellArr;
-
                             }
                         } else {
 
@@ -157,13 +138,11 @@ class FIltersController extends Controller
                                 $sellArr['price'] = $data->selldata;
                                 $sellArr['base'] = $data->base;
                                 $sellArr['currency'] = $data->currency;
-                                $sellArr['name'] = $exchangeArr->name;
+                                $sellArr['name'] = $exchangeLogsArr->name;
+                                $buyArr['url'] = \App\Exchange::where('name', $exchangeLogsArr->name)->first()->preference['url'];
                                 $sellArr['timestamp'] = date('Y-m-d H:i', strtotime($val->created_at));
-
                                 $finalSellArr[] = $sellArr;
-
                             }
-
                         }
                     }   
                }
@@ -205,24 +184,18 @@ class FIltersController extends Controller
 
         $currency_layer = $this->getCurrencyLayerData();
 
-        $sellcurrency = array();
+        $sellcurrency = [];
 
         $crypto = ($cryptostr== 'all') ? 'all' : explode(',', $cryptostr);
-
         
-
         foreach ($fromCurrencyArr as $key1 => $currency1) {
-
             foreach ($fromCurrencyArr as $key2 => $currency2) {
-
                 if($currency1 != $currency2){
-                    
-
                     $resBuyData = $this->fillBuyData($fromExchangeSql, $currency1, $crypto);
                     
                     // echo $currency2;
                     // echo '/';
-                    $sellcurrency = array();
+                    $sellcurrency = [];
 
                     $sellcurrency[] = $currency2; 
                   //  print_r($sellcurrency);
@@ -370,6 +343,7 @@ class FIltersController extends Controller
         $fromCurrency = $request->get('currency');
         $withFee = $request->get('fee');
         $exchanges = $request->get('exchanges');
+        $profitFilter = $request->has('has_profits') ? $request->get('has_profits') : false;
         $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
         $fromCurrencyArr = explode(',',$fromCurrency);
         //$countries = $request->get('countries');
@@ -380,11 +354,11 @@ class FIltersController extends Controller
         $buyPrice = 0;
         $sellPrice = 0;
 
-        $finalBuyArr = array();
-        $finalSellArr = array();
-        $finalArr = array();
-        $currencyArr = array();
-        $urlsArr = array();
+        $finalBuyArr = [];
+        $finalSellArr = [];
+        $finalArr = [];
+        $currencyArr = [];
+        $urlsArr = [];
 
        
 
@@ -451,6 +425,9 @@ class FIltersController extends Controller
                     $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
                     $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                     $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
+
+                                                    $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
+
 
                     $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
                     $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
