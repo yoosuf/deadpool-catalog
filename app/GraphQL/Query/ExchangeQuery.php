@@ -26,6 +26,8 @@ class ExchangeQuery extends Query
             'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
             'description' => ['name' => 'description', 'type' => Type::string()],
+            'preference' => ['name' => 'preference', 'type' => Type::string()],
+            
         ];
     }
 

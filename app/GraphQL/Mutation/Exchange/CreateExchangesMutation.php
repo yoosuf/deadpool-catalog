@@ -32,7 +32,9 @@ class CreateExchangesMutation extends Mutation
     {
         return [
             'name' => ['name' => 'name', 'type' => Type::string()],
-            'description' => ['name' => 'description', 'type' => Type::string()]
+            'description' => ['name' => 'description', 'type' => Type::string()],
+            'preference' => ['name' => 'preference', 'type' => Type::string()],
+            'is_active' => ['name' => 'is_active', 'type' => Type::string()],
         ];
     }
 
@@ -40,7 +42,9 @@ class CreateExchangesMutation extends Mutation
     {
         $data = [
             'name' => $args['name'],
-            'description' => $args['description']
+            'description' => $args['description'],
+            'preference' => $args['preference'],
+            'is_active' => $args['preference']
             
         ];
         $newData = Exchange::create($data);

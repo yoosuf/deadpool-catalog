@@ -33,6 +33,7 @@ class UpdateExchangesMutation extends Mutation
             'id' => ['name' => 'id', 'type' => Type::int()],
             'name' => ['name' => 'name', 'type' => Type::string()],
             'description' => ['name' => 'description', 'type' => Type::string()],
+            'preference' => ['name' => 'preference', 'type' => Type::string()],
             'is_active' => ['name' => 'is_active', 'type' => Type::boolean()]
         ];
     }

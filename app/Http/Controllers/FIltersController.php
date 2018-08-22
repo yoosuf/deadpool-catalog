@@ -300,6 +300,7 @@ class FIltersController extends Controller
         
 
          $percentArr = array();
+         $lossArr = array();
          $chatrsArr = array();
          $timeArr = array();
          foreach ($resBuyData as $id1 => $value1) {
@@ -323,6 +324,17 @@ class FIltersController extends Controller
                 $percentage =  ($calculatedVal/$amount)*100;
                 $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
                 $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                // if($percentage > 0){
+
+                //     $lossArr[$id1] = '0';
+                //     $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+
+                // }else {
+
+                //     $percentArr[$id1] = '0';
+                //     $lossArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                // }
+
                
             }
          }
@@ -330,6 +342,9 @@ class FIltersController extends Controller
         //  $chatrsArr['data'] = $percentArr;
          $chatrsArr['time'] = array_reverse($timeArr);
          $chatrsArr['profits'] = array_reverse($percentArr);
+        //  $chatrsArr['losses'] = array_reverse($lossArr);
+
+        
 
 
          return $chatrsArr;
@@ -426,7 +441,7 @@ class FIltersController extends Controller
                     $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                     $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
 
-                                                    $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
+                    $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
 
 
                     $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
@@ -437,7 +452,7 @@ class FIltersController extends Controller
             }
         }
 
-       //print_r($finalArr);exit;
+    //    print_r($finalArr);exit;
 
        // prepare next urls
         if(count($fromCurrencyArr) > 1){
@@ -445,7 +460,7 @@ class FIltersController extends Controller
             $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url());        
         }
 
-        // print_r($urlsArr);exit;
+        //print_r($finalArr);exit;
 
         return response()->json([
                 'data' => $finalArr,
