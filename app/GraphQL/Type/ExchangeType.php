@@ -28,6 +28,10 @@ class ExchangeType extends BaseType
                 'type' => Type::string(),
                 'description' => 'The description of exchange'
             ],
+            'preference' => [
+                'type' => Type::string(),
+                'description' => 'The preference of Currency'
+            ],
             'is_active' => [
                 'type' => Type::string(),
                 'description' => 'The is_active of exchange'
