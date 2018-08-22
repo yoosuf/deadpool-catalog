@@ -54,7 +54,7 @@ class FIltersController extends Controller
 
     public function fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency){
 
-        //$finalBuyArr = [];
+        $finalBuyArr = [];
        
 
         $fromCurrencyArr = is_array($fromCurrencyArr) ? $fromCurrencyArr[0]: $fromCurrencyArr;
@@ -63,7 +63,7 @@ class FIltersController extends Controller
             $buyArr = [];
 
             // dd($val);
-            $finalBuyArr = [];
+            // $finalBuyArr = [];
             
 
             $exchangeLogsArr = json_decode($val->preference);
