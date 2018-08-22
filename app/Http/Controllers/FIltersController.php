@@ -470,6 +470,8 @@ class FIltersController extends Controller
                     $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                     $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
 
+                    $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
+
                     $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
 
 
