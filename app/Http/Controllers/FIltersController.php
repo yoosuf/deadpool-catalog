@@ -67,23 +67,23 @@ class FIltersController extends Controller
             
 
             $exchangeLogsArr = json_decode($val->preference);
-
+            
             
             foreach ($exchangeLogsArr->rates as $key => $value) 
             {
 
                 if($key == $fromCurrencyArr)
                 {
-                    
 
                     foreach ($value as $crypto => $data)
                     {
                         if($cryptoCurrency == 'all') {
 
-                           //print_r($data);
+                          
 
                             if($data->buydata != 0)
                             {
+                                //print_r($data);
                                 $buyPrice = $data->buydata;
                                 $buyArr['price'] = $data->buydata;
                                 $buyArr['base'] = $data->base;
@@ -95,10 +95,10 @@ class FIltersController extends Controller
                                 $finalBuyArr[] = $buyArr;
 
                                 
-
-                              
                             }
                         } else {
+
+                            
 
                             if($data->buydata != 0 AND in_array($crypto,$cryptoCurrency))
                             {
@@ -119,6 +119,7 @@ class FIltersController extends Controller
         }
     
         return $finalBuyArr;
+        
     }
 
     public function fillSellData($toExchangeSql, $fromCurrencyArr, $cryptoCurrency){
@@ -202,11 +203,13 @@ class FIltersController extends Controller
 
     // $percentage =  ($calculatedVal/$amount)*100;
 
-    private function prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $cryptostr, $amount, $withFee, $exchanges, $url){
+    private function prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $cryptostr, $amount, $withFee, $exchanges, $url, $hasProfit){
 
         $currency_layer = $this->getCurrencyLayerData();
 
         $sellcurrency = [];
+
+        $finalArr = [];
 
         $crypto = ($cryptostr== 'all') ? 'all' : explode(',', $cryptostr);
         
@@ -261,8 +264,21 @@ class FIltersController extends Controller
                                 // $array[$sellExchange][$sellbase][$selcurr] = $resSellData[$x];
                                 // $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                                 //$profitArr = 
-                                $finalArr['profit'][$buyCurr.'-'.$selcurr][] = number_format((float)$percentage, 2, '.', '');
-                                $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$cryptostr.'&fee='.$withFee.'&exchanges='.$exchanges;
+                                if($hasProfit === 'true'){
+
+                                    if($percentage > 0) {
+                
+                                        $finalArr['profit'][$buyCurr.'-'.$selcurr][] = number_format((float)$percentage, 2, '.', '');
+                                        $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$cryptostr.'&fee='.$withFee.'&exchanges='.$exchanges.'&has_profits='.$hasProfit;
+                                
+                                    }
+                                }else{
+                
+                                    $finalArr['profit'][$buyCurr.'-'.$selcurr][] = number_format((float)$percentage, 2, '.', '');
+                                    $finalArr['url'] [$buyCurr.'-'.$selcurr]= $url.'?currency='.$buyCurr.','.$selcurr.'&amount='.$amount.'&crypto='.$cryptostr.'&fee='.$withFee.'&exchanges='.$exchanges.'&has_profits='.$hasProfit;
+                                
+                                }
+                                
                                 //$finalArr[$buybase][$buyCurr]['sell'] = $array;
             
                            }
@@ -278,17 +294,20 @@ class FIltersController extends Controller
 
         $urlArray = [];
 
+        if(count($finalArr) > 0){
+
         foreach ($finalArr['profit'] as $key => $value) {
             rsort($value);
             $urlArray[$key]['url'] = $finalArr['url'][$key];
             $urlArray[$key]['profit'] = $value[0];
         }
+    }
 
       
      return $urlArray;
     }
 
-    public function getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr,$rate,$withFee){
+    public function getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr,$rate,$withFee,$hasProfit){
 
         $baseBuy[]= $buybase;
         $baseSell[]= $sellbase;
@@ -299,20 +318,26 @@ class FIltersController extends Controller
         $date->modify('-24 hours');
         $formatted_date = $date->format('Y-m-d H:i:s');
 
+        // $buyExchange = $buyExchange == 'Cex' ? 'CEX' : $buyExchange;
+
+        // $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
+
         // echo date('Y-m-d H:i:s');exit;
 
         $buyData = DB::table('exchange_logs')
             ->whereJsonContains('preference->name', $buyExchange)
             // ->where('created_at', '>',$formatted_date)
             ->latest()
-            ->limit(12)
+            ->limit(3)
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
             // ->where('created_at', '>',$formatted_date
             ->latest()
-            ->limit(12)
+            ->limit(3)
             ->get();
+
+        //print_r($sellExchange);exit;
 
          $resBuyData = $this->fillBuyData($buyData, $buyCurr, $baseBuy);
 
@@ -345,7 +370,20 @@ class FIltersController extends Controller
 
                 $percentage =  ($calculatedVal/$amount)*100;
                 $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
-                $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+
+                
+
+                if($hasProfit === 'true'){
+
+                    if($percentage > 0) {
+
+                        $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                    }
+                }else{
+
+                    $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
+                }
+                
                 // if($percentage > 0){
 
                 //     $lossArr[$id1] = '0';
@@ -383,7 +421,10 @@ class FIltersController extends Controller
         $profitFilter = $request->has('has_profits') ? $request->get('has_profits') : false;
         $cryptoCurrency = ($request->get('crypto')== 'all') ? 'all' : explode(',', $request->get('crypto'));
         $fromCurrencyArr = explode(',',$fromCurrency);
-        //$countries = $request->get('countries');
+        $hasProfit = $request->get('has_profits');
+
+        // echo $hasProfit;
+        // exit; 
         //$toCurrency = $request->get('sell_currency');
 
        // print_r($fromCurrencyArr);exit;
@@ -455,7 +496,7 @@ class FIltersController extends Controller
                     $rate = $ratesArr->data->$keystr;
 
 
-                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee);
+                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee, $hasProfit);
                     //exit;
                     
 
@@ -466,17 +507,45 @@ class FIltersController extends Controller
                     $percentage =  ($calculatedVal/$amount)*100;
                     $percentage = ($withFee === 'true') ? $percentage-2 : $percentage;
 
-                    $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
-                    $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
-                    $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
+                    
+                    if($hasProfit === 'true'){
 
-                    $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
+                        if($percentage > 0) {
+
+                            
+                            $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
+                            $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
+                            $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
+
+                           // $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
+
+                            $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
+
+                            $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
+                            $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
+                        }
+                    }else{
+
+                        //echo 'fff';
+
+                        $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
+                        $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
+                        $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
+
+                   // $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
 
                     $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
 
+    
+                        $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
+                         $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
 
-                    $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
-                    $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
+                        //  print_r($finalArr);
+                    }
+
+                    
+
+                    
                     
 
                }
@@ -488,7 +557,7 @@ class FIltersController extends Controller
        // prepare next urls
         if(count($fromCurrencyArr) > 1){
             
-            $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url());        
+            $urlsArr = $this->prepareNextUrls($fromExchangeSql, $fromCurrencyArr, $request->get('crypto'), $amount, $withFee, $exchanges, $request->url(), $hasProfit);        
         }
 
         // print_r($finalArr);exit;
