@@ -522,7 +522,7 @@ class FIltersController extends Controller
                             $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
 
                             $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
-                            $finalArr[$buyExchange][$buybase][$buyCurr]['url'] = \App\Exchange::where('name', $buyExchange)->first()->preference['url'];
+                            $finalArr[$buyExchange][$buybase][$buyCurr]['buy']['url'] = \App\Exchange::where('name', $buyExchange)->first()->preference['url'];
                             $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
                         }
                     }else{
@@ -539,7 +539,7 @@ class FIltersController extends Controller
 
     
                         $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
-                        $finalArr[$buyExchange][$buybase][$buyCurr]['url'] = \App\Exchange::where('name', $buyExchange)->first()->preference['url'];
+                        $finalArr[$buyExchange][$buybase][$buyCurr]['buy']['url'] = \App\Exchange::where('name', $buyExchange)->first()->preference['url'];
                          $finalArr[$buyExchange][$buybase][$buyCurr]['sell'] = $array;
 
                         //  print_r($finalArr);
