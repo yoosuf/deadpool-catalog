@@ -72,11 +72,11 @@ class ExchangeLogsController extends Controller
            
 
             $historicalBuyData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(20))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(5))
                     ->get();
 
             $historicalSellData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(20))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(5))
                     ->get();
 
 
