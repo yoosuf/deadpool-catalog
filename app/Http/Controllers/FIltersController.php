@@ -354,6 +354,7 @@ class FIltersController extends Controller
 
            // echo $value1['timestamp'];
             $time = date('H:i', strtotime($value1['timestamp']));
+            $timeArr[$id1] = $time;
 
             $buyval = $value1['price'];
             foreach ($resSellData as $id2 => $value2) {
@@ -376,12 +377,10 @@ class FIltersController extends Controller
 
                     if($percentage > 0) {
 
-                        $timeArr[$id1] = $time;
                         $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                     }
                 }else{
 
-                    $timeArr[$id1] = $time;
                     $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                 }
                 
