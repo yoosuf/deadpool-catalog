@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('UpdateExchanges:updateExchanges')
-        ->cron('0 */2 * * *');
+        ->cron('*/20 * * * *');
         $schedule->command('ConvertCurrency:convertCurrency')
         ->cron('0 */5 * * *');
     }
