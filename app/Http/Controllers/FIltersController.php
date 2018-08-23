@@ -354,7 +354,6 @@ class FIltersController extends Controller
 
            // echo $value1['timestamp'];
             $time = date('H:i', strtotime($value1['timestamp']));
-            $timeArr[$id1] = $time;
 
             $buyval = $value1['price'];
             foreach ($resSellData as $id2 => $value2) {
@@ -377,10 +376,12 @@ class FIltersController extends Controller
 
                     if($percentage > 0) {
 
+                        $timeArr[$id1] = $time;
                         $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                     }
                 }else{
 
+                    $timeArr[$id1] = $time;
                     $percentArr[$id1] = number_format((float)$percentage, 2, '.', '');
                 }
                 
@@ -423,12 +424,6 @@ class FIltersController extends Controller
         $fromCurrencyArr = explode(',',$fromCurrency);
         $hasProfit = $request->get('has_profits');
 
-        // echo $hasProfit;
-        // exit; 
-        //$toCurrency = $request->get('sell_currency');
-
-       // print_r($fromCurrencyArr);exit;
-
         $buyPrice = 0;
         $sellPrice = 0;
 
@@ -438,21 +433,12 @@ class FIltersController extends Controller
         $currencyArr = [];
         $urlsArr = [];
 
-       
-
-        // print_r($users);
-        // exit;
-
         // exchange filter
         $fromExchangeSql = $this->exchangeFilter($exchanges);
-       // print_r($finalBuyArr );exit;
-
         $toExchangeSql = $fromExchangeSql;
     
         // filling the buy array
         $finalBuyArr = $this->fillBuyData($fromExchangeSql, $fromCurrencyArr, $cryptoCurrency);
-
-       
         $trimedBuyArr = $this->purifyArray($finalBuyArr);
 
         // filling the sell array
@@ -461,9 +447,6 @@ class FIltersController extends Controller
 
         // get currency layer data
         $currency_layer = $this->getCurrencyLayerData();
-
-        // print_r($trimedSellArr );exit;
-
 
         for ($i=0; $i < count($trimedBuyArr) ; $i++) { 
 
@@ -487,19 +470,14 @@ class FIltersController extends Controller
                     }
                 }
 
-                //echo $withFee;
-                // echo $buyExchange.'-'.$sellExchange;
-
                 if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
                 {
                     $keystr = $buyCurr.$selcurr;
                     $rate = $ratesArr->data->$keystr;
 
-
+                    //retrive data for graphs
                     $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee, $hasProfit);
-                    //exit;
                     
-
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                     $convertedVal = $val/$rate;
                     $calculatedVal = $convertedVal - $amount;
@@ -516,9 +494,6 @@ class FIltersController extends Controller
                             $array[$sellExchange][$sellbase][$selcurr] = $trimedSellArr[$x];
                             $array[$sellExchange][$sellbase][$selcurr]['profit'] = number_format((float)$percentage, 2, '.', '');
                             $array[$sellExchange][$sellbase][$selcurr]['charts'] = $graphData;
-
-                           // $sellExchange = $sellExchange == 'Cex' ? 'CEX' : $sellExchange;
-
                             $array[$sellExchange][$sellbase][$selcurr]['url'] = \App\Exchange::where('name', $sellExchange)->first()->preference['url'];
 
                             $finalArr[$buyExchange][$buybase][$buyCurr]['buy'] = $trimedBuyArr[$i];
