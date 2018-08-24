@@ -353,7 +353,7 @@ class FIltersController extends Controller
          foreach ($resBuyData as $id1 => $value1) {
 
            // echo $value1['timestamp'];
-            $time = date('H:i', strtotime($value1['timestamp']));
+            $time = date('Y-m-d H:i:s', strtotime($value1['timestamp']));
             
 
             $buyval = $value1['price'];
