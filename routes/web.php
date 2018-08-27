@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Artisan;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,6 +10,14 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+
+$router->get('command', function () {
+	
+    /* php artisan migrate */
+   // parent::setUp();
+    Artisan::call('ExportCsv:exportCsv');
+    dd("Done");
+});
 
 $router->get('/', function () use ($router) {
 
@@ -31,6 +39,7 @@ $router->get('calculate', 'FIltersController@calculateData');
 
 
 
+
 // $router->group(
 //     ['middleware' => 'jwt.auth'], 
 //     function() use ($router) {
@@ -40,6 +49,7 @@ $router->get('calculate', 'FIltersController@calculateData');
 //         });
 //     }
 // );
+
 
 
 

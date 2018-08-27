@@ -17,6 +17,7 @@ use DB;
 
 class FIltersController extends Controller
 {
+    
     public function purifyArray($array)
     {
         $newArray = [];

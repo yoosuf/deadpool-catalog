@@ -53,11 +53,11 @@ class ExportCsv extends Command
        
 
         $historicalBuyData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(10))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
                 ->get();
 
         $historicalSellData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(10))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
                 ->get();
 
        // print_r($historicalBuyData);exit;
@@ -230,7 +230,27 @@ class ExportCsv extends Command
 
         }
 
+        // $headers = array(
+
+        //     'Content-type: application/csv',
+        //     'Content-Disposition: attachment;filename=exchange_logs.csv'
+
+        // );
+
+        // $file= "logins.csv";
+
+        // $headers = array(
+        //           'Content-type: application/csv',
+        //         );
+    
+        // return response()->download($file, 'test.csv', $headers);
+
+
+
         fclose($output_file_pointer);
+
+
+        // return response()->download($pathToFile, 'test.csv', $headers);
 
         //return response()->download('/../logins.csv');
 
