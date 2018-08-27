@@ -72,12 +72,14 @@ class ExchangeLogsController extends Controller
            
 
             $historicalBuyData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(5))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                     ->get();
 
             $historicalSellData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(5))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                     ->get();
+
+           // print_r($historicalBuyData);exit;
 
 
             foreach ($historicalBuyData as $k => $val)
@@ -152,28 +154,13 @@ class ExchangeLogsController extends Controller
           // print_r($finalSellArr);exit;
 
             // Set response headers to trigger file download on client side
-            header("Content-type: application/csv");
-            header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
-            $output_file_pointer = fopen('php://output', 'w');
+            header('Content-disposition: attachment; filename=file.json');
+            header('Content-type: application/json');
 
-            // // Output the CSV headers
-            $headers = array(
-                'Timestamp',
-                'Sending exchange',
-                'Receiving Exchange',
-                'Sending currency',
-                'Receiving currency',
-                'Sending crypto',
-                'Receiving crypto',
-                'Sending price',
-                'Receiving price',
-                'Profit'
-            );
-
-            //print_r($finalBuyArr);exit;
-
-            fputcsv($output_file_pointer, $headers);
+            $output = [];
+          
+           // fputcsv($output_file_pointer, $headers);
                 
             foreach ($finalBuyArr as $k1 => $buydata) {
 
@@ -215,24 +202,24 @@ class ExchangeLogsController extends Controller
 
                         $percentage =  ($calculatedVal/$amount)*100;
 
-                        $output = array(
+                        $output[] = array(
 
-                            $buydata['timestamp'],
-                            $buyExchange,
-                            $sellExchange,
-                            $buyCurr,
-                            $selcurr,
-                            $buybase,
-                            $sellbase,
-                            $buydata['price'],
-                            $selldata['price'],
-                            number_format((float)$percentage, 2, '.', '')
+                            'Timestamp'=> $buydata['timestamp'],
+                            'Sending exchange'=> $buyExchange,
+                            'Receiving Exchange'=> $sellExchange,
+                            'Sending currency'=>$buyCurr,
+                            'Receiving currency'=>$selcurr,
+                            'Sending crypto'=>$buybase,
+                            'Receiving crypto'=>$sellbase,
+                            'Sending price'=>$buydata['price'],
+                            'Receiving price'=>$selldata['price'],
+                            'Profit'=>number_format((float)$percentage, 2, '.', '')
                             // $val['created_at']
                         );
                         
-                        fputcsv($output_file_pointer, $output);
-                        ob_flush();
-                        flush();
+                        // fputcsv($output_file_pointer, $output);
+                        // ob_flush();
+                        // flush();
 
                     }
 
@@ -240,11 +227,25 @@ class ExchangeLogsController extends Controller
 
             }
 
-            fclose($output_file_pointer);
-            die;
-        }
-       
+            //fclose($output_file_pointer);
 
+           $json = json_encode($output);
+            
+
+
+            echo $json;
+
+            // $fp = fopen('results.json', 'w');
+            // fwrite($fp, json_encode($output));
+            // fclose($fp);
+
+            //die;
+        }
+        exit;
+        // print_r($output);exit;
+       // die;
+       
+//exit;
         /**
          * render as JSON
          */
