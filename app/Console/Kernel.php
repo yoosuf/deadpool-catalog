@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         
         '\App\Console\Commands\UpdateExchanges',
         '\App\Console\Commands\ConvertCurrency',
+        '\App\Console\Commands\ExportCsv',
     ];
 
     /**
@@ -27,6 +28,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('UpdateExchanges:updateExchanges')
+        ->cron('*/20 * * * *');
+        $schedule->command('ExportCsv:exportCsv')
         ->cron('*/20 * * * *');
         $schedule->command('ConvertCurrency:convertCurrency')
         ->cron('0 */5 * * *');
