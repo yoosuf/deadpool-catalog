@@ -139,10 +139,10 @@ class ExportCsv extends Command
         header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
 
-        $filename = "../../../../logins.csv";
+        //$filename = "../../../../logins.csv";
 
 
-        $output_file_pointer = fopen($filename, 'w');
+        $output_file_pointer = fopen('php://output', 'w');
 
         
    // $handle = fopen($filename, 'w');
