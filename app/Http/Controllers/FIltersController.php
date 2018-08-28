@@ -26,7 +26,7 @@ class FIltersController extends Controller
     {
        //print_r(new Mail());exit;
        Mail::send('mail',['name','Ripon Uddin Arman'],function($message){
-        $message->to('prabuddhanipun@gmail.com')->subject("Email Testing with Laravel");
+        $message->to('welltech90@yopmail.com')->subject("Email Testing with Laravel");
         $message->from('clhg52@gmail.com','Creative Losser Hopeless Genius');
     });
         echo "Basic Email Sent. Check your inbox.";
