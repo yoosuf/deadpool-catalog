@@ -12,12 +12,29 @@ use App\ExchangeLog;
 use GuzzleHttp\Client;
 use Swap\Laravel\Facades\Swap;
 use DB;
+use Illuminate\Support\Facades\Mail;
+
 
 //use Swap;
 
 class FIltersController extends Controller
 {
     
+    
+
+    public function email()
+    {
+       //print_r(new Mail());exit;
+       Mail::send('mail',['name','Ripon Uddin Arman'],function($message){
+        $message->to('prabuddhanipun@gmail.com')->subject("Email Testing with Laravel");
+        $message->from('clhg52@gmail.com','Creative Losser Hopeless Genius');
+    });
+        echo "Basic Email Sent. Check your inbox.";
+
+       // Mail::raw('Raw string email', function($msg) { $msg->to(['prabuddhanipun@gmail.com']); $msg->from(['x@x.com']); });
+    }
+
+
     public function purifyArray($array)
     {
         $newArray = [];

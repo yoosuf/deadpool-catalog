@@ -54,6 +54,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -95,14 +96,24 @@ $app->configure('cors');
 $app->configure('api');
 
 
+
+
+
 // Load the configuration
 $app->configure('swap');
 
 // Register the service provider
+$app->register(App\Providers\AppServiceProvider::class);
+$app->configure('services');
+
 $app->register(Swap\Laravel\SwapServiceProvider::class);
 $app->register(Neoxia\Routing\ResponseFactoryServiceProvider::class);
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 $app->register(Spatie\Cors\CorsServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
+$app->configure('mail');
+//$app->withFacades();
+
 
 
 
