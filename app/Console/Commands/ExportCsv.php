@@ -249,6 +249,9 @@ class ExportCsv extends Command
 
         fclose($output_file_pointer);
 
+        Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
+       //print_r($x);exit;
+
 
         // return response()->download($pathToFile, 'test.csv', $headers);
 
