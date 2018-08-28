@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Log;
 use DB;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMailable;
 
 class ExportCsv extends Command
 {
@@ -140,7 +141,7 @@ class ExportCsv extends Command
         header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
 
-        $filename = "/storage/logins.csv";
+        $filename = "/../../../storage/logins.csv";
 
 
         $output_file_pointer = fopen($filename, 'w');
@@ -250,7 +251,9 @@ class ExportCsv extends Command
 
         fclose($output_file_pointer);
 
-        Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
+        Mail::to('welltech90@yopmail.com')->send(new SendMailable(34));
+
+       // Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
        //print_r($x);exit;
 
 
