@@ -42,6 +42,8 @@ $router->get('calculate', 'FIltersController@calculateData');
 
 $router->get('email', 'FIltersController@email');
 
+$router->get('/csv/download/{id}', 'FIltersController@csvDownload');
+
 
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {
 

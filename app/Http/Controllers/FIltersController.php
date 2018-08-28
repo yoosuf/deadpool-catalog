@@ -13,6 +13,7 @@ use GuzzleHttp\Client;
 use Swap\Laravel\Facades\Swap;
 use DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 
 //use Swap;
@@ -21,17 +22,26 @@ class FIltersController extends Controller
 {
     public function email()
     {
+        $file_path = storage_path().'/csv';
 
-        Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
-       //print_r($x);exit;
-       
-    //    Mail::send('mail',['name','Ripon Uddin Arman'],function($message){
-    //     $message->to('welltech90@yopmail.com')->subject("Email Testing with Laravel");
-    //     $message->from('clhg52@gmail.com','Creative Losser Hopeless Genius');
-    // });
-        echo "Basic Email Sent. Check your inbox.";
+        $csvFiles = glob($file_path."/*.csv");
 
-       // Mail::raw('Raw string email', function($msg) { $msg->to(['prabuddhanipun@gmail.com']); $msg->from(['x@x.com']); });
+        return view('emails.mail', ['csvFiles' => $csvFiles,'path'=> $file_path]);
+    }
+
+    public function csvDownload($id)
+    {
+        $file_path = storage_path().'/csv';
+
+        $csvFiles = glob($file_path."/*.csv");
+
+        if (array_key_exists($id, $csvFiles)) {
+
+            return response()->download($csvFiles[$id]);
+        }
+
+        exit;
+
     }
 
 

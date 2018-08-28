@@ -23,7 +23,11 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
+$app->configure('filesystems');
+
 $app->withFacades();
+
+class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 
 $app->withEloquent();
 
@@ -44,6 +48,8 @@ $app->withFacades(true, [
 |
 */
 
+$app->singleton('filesystem', function ($app) { return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem'); });
+
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
@@ -53,6 +59,7 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
+
 
 
 /*
