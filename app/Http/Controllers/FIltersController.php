@@ -19,16 +19,16 @@ use Illuminate\Support\Facades\Mail;
 
 class FIltersController extends Controller
 {
-    
-    
-
     public function email()
     {
-       //print_r(new Mail());exit;
-       Mail::send('mail',['name','Ripon Uddin Arman'],function($message){
-        $message->to('welltech90@yopmail.com')->subject("Email Testing with Laravel");
-        $message->from('clhg52@gmail.com','Creative Losser Hopeless Genius');
-    });
+
+        Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
+       //print_r($x);exit;
+       
+    //    Mail::send('mail',['name','Ripon Uddin Arman'],function($message){
+    //     $message->to('welltech90@yopmail.com')->subject("Email Testing with Laravel");
+    //     $message->from('clhg52@gmail.com','Creative Losser Hopeless Genius');
+    // });
         echo "Basic Email Sent. Check your inbox.";
 
        // Mail::raw('Raw string email', function($msg) { $msg->to(['prabuddhanipun@gmail.com']); $msg->from(['x@x.com']); });
