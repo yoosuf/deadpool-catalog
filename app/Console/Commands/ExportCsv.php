@@ -9,6 +9,7 @@ use App\Jobs\ProcessExportCsv;
 use Carbon\Carbon;
 use Log;
 use DB;
+use Illuminate\Support\Facades\Mail;
 
 class ExportCsv extends Command
 {
