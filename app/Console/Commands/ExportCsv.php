@@ -57,11 +57,11 @@ class ExportCsv extends Command
        
 
         $historicalBuyData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                 ->get();
 
         $historicalSellData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                 ->get();
 
        // print_r($historicalBuyData);exit;
@@ -143,7 +143,7 @@ class ExportCsv extends Command
         header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
 
-        $filename = "./storage/csv/logins-".time().".csv";
+        $filename = "./storage/csv/exchange-logs-".time().".csv";
 
 
         $output_file_pointer = fopen($filename, 'w');
@@ -164,8 +164,6 @@ class ExportCsv extends Command
             'Receiving price',
             'Profit'
         );
-
-        //print_r($finalBuyArr);exit;
 
         fputcsv($output_file_pointer, $headers);
             
@@ -234,46 +232,8 @@ class ExportCsv extends Command
 
         }
 
-        // $headers = array(
-
-        //     'Content-type: application/csv',
-        //     'Content-Disposition: attachment;filename=exchange_logs.csv'
-
-        // );
-
-        // $file= "logins.csv";
-
-        // $headers = array(
-        //           'Content-type: application/csv',
-        //         );
-    
-        // return response()->download($file, 'test.csv', $headers);
-
-
 
         fclose($output_file_pointer);
 
-
-        exit;
-
-        $response = [
-
-            'url'=>'fgghf/ddd/dddsdasd.ff',
-            'status'=>'success'
-        ];
-
-        event(new SendMailEvent($response));
-
-        //Mail::to('welltech90@yopmail.com')->send(new SendMailable(34));
-
-       // Mail::raw('Raw string email', function($msg) { $msg->to(['welltech90@yopmail.com']); $msg->from(['test@test.com']); });
-       //print_r($x);exit;
-
-
-        // return response()->download($pathToFile, 'test.csv', $headers);
-
-        //return response()->download('/../logins.csv');
-
-        die;
     }
 }

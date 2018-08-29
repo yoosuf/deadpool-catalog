@@ -31,8 +31,7 @@ class FIltersController extends Controller
         //echo $count;exit;
 
         return response()->download($csvFiles[$count]);
-        exit;
-
+       
        // return view('emails.mail', ['csvFiles' => $csvFiles,'path'=> $file_path]);
     }
 
