@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Storage;
 
 class FIltersController extends Controller
 {
-    public function email()
+    public function exportcsv()
     {
         $file_path = storage_path().'/csv';
 

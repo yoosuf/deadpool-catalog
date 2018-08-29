@@ -40,7 +40,7 @@ $router->get('calculate', 'FIltersController@calculateData');
 //     }
 // );
 
-$router->get('email', 'FIltersController@email');
+$router->get('exportcsv', 'FIltersController@exportcsv');
 
 $router->get('/csv/download/{id}', 'FIltersController@csvDownload');
 
