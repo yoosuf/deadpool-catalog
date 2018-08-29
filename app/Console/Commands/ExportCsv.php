@@ -139,8 +139,8 @@ class ExportCsv extends Command
       // print_r($finalSellArr);exit;
 
         // Set response headers to trigger file download on client side
-        header("Content-type: application/csv");
-        header("Content-Disposition: attachment;filename=exchange_logs.csv");
+        // header("Content-type: application/csv");
+        //header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
 
         $filename = "./storage/csv/exchange-logs-".time().".csv";
@@ -164,6 +164,8 @@ class ExportCsv extends Command
             'Receiving price',
             'Profit'
         );
+
+        //print_r($finalBuyArr);exit;
 
         fputcsv($output_file_pointer, $headers);
             
@@ -232,8 +234,9 @@ class ExportCsv extends Command
 
         }
 
-
         fclose($output_file_pointer);
+
+        exit;
 
     }
 }

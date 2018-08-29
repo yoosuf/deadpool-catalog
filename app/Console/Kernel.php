@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('UpdateExchanges:updateExchanges')
         ->cron('*/20 * * * *');
         $schedule->command('ExportCsv:exportCsv')
-        ->cron('* * */2 * *');
+        ->cron('0 0 */2 * *');
         $schedule->command('ConvertCurrency:convertCurrency')
         ->cron('0 */5 * * *');
     }
