@@ -26,7 +26,14 @@ class FIltersController extends Controller
 
         $csvFiles = glob($file_path."/*.csv");
 
-        return view('emails.mail', ['csvFiles' => $csvFiles,'path'=> $file_path]);
+        $count = count($csvFiles)-1;
+
+        //echo $count;exit;
+
+        return response()->download($csvFiles[$count]);
+        exit;
+
+       // return view('emails.mail', ['csvFiles' => $csvFiles,'path'=> $file_path]);
     }
 
     public function csvDownload($id)
