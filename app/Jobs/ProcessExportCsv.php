@@ -37,11 +37,11 @@ class ProcessExportCsv extends Job
        
 
         $historicalBuyData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                 ->get();
 
         $historicalSellData = DB::table("exchange_logs")
-                ->whereDate('created_at', '>', Carbon::now()->subDays(45))
+                ->whereDate('created_at', '>', Carbon::now()->subDays(30))
                 ->get();
 
        // print_r($historicalBuyData);exit;
