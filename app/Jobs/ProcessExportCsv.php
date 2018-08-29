@@ -125,7 +125,7 @@ class ProcessExportCsv extends Job
         header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
 
-        $filename = "./storage/csv/logins-".time().".csv";
+        $filename = "./storage/csv/exchangeLogs-".time().".csv";
 
 
         $output_file_pointer = fopen($filename, 'w');
