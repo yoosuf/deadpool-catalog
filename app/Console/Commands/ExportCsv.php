@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Http\Response;
 use App\Jobs\ProcessExportCsv;
 use Carbon\Carbon;
 use Log;

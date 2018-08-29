@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 
 use App\Http\Controllers\FIltersController;
+use Illuminate\Http\Response;
 use Carbon\Carbon;
 use Log;
 use DB;
@@ -13,6 +14,7 @@ use App\Events\SendMailEvent;
 
 class ProcessExportCsv extends Job
 {
+    private $filter;
     /**
      * Create a new job instance.
      *
