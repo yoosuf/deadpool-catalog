@@ -249,7 +249,7 @@ class FIltersController extends Controller
         
         foreach ($fromCurrencyArr as $key1 => $currency1) {
             foreach ($fromCurrencyArr as $key2 => $currency2) {
-                if($currency1 != $currency2){
+               // if($currency1 != $currency2){
                     $resBuyData = $this->fillBuyData($fromExchangeSql, $currency1, $crypto);
                     
                     // echo $currency2;
@@ -282,7 +282,7 @@ class FIltersController extends Controller
                                 }
                             }
             
-                            if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
+                            if($buybase == $sellbase)
                             {
                                 $keystr = $buyCurr.$selcurr;
                                 $rate = $ratesArr->data->$keystr;
@@ -321,7 +321,7 @@ class FIltersController extends Controller
 
 
                     //$urlsArr[$currency1.'-'.$currency2] = $url.'?currency='.$currency1.','.$currency2.'&amount='.$amount.'&crypto='.$crypto.'&fee='.$withFee.'&exchanges='.$exchanges;
-               }
+               //}
             }
         }
        
@@ -362,13 +362,13 @@ class FIltersController extends Controller
             ->whereJsonContains('preference->name', $buyExchange)
             // ->where('created_at', '>',$formatted_date)
             ->latest()
-            ->limit(12)
+            ->limit(3)
             ->get();
         $sellData = DB::table('exchange_logs')
             ->where('preference->name', $sellExchange)
             // ->where('created_at', '>',$formatted_date
             ->latest()
-            ->limit(12)
+            ->limit(3)
             ->get();
 
         //print_r($sellExchange);exit;
@@ -480,6 +480,9 @@ class FIltersController extends Controller
         $finalSellArr = $this->fillSellData($toExchangeSql, $fromCurrencyArr, $cryptoCurrency);
         $trimedSellArr = $this->purifyArray($finalSellArr);
 
+
+        // print_r($trimedBuyArr);exit;
+
         // get currency layer data
         $currency_layer = $this->getCurrencyLayerData();
 
@@ -505,7 +508,7 @@ class FIltersController extends Controller
                     }
                 }
 
-                if($buybase == $sellbase AND ($buyExchange != $sellExchange OR $buyCurr != $selcurr))
+                if($buybase == $sellbase)
                 {
                     $keystr = $buyCurr.$selcurr;
                     $rate = $ratesArr->data->$keystr;
@@ -564,7 +567,7 @@ class FIltersController extends Controller
             }
         }
 
-      // print_r($finalArr);exit;
+      
 
        // prepare next urls
         if(count($fromCurrencyArr) > 1){
