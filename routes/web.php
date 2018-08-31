@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -41,6 +40,9 @@ $router->get('calculate', 'FIltersController@calculateData');
 //     }
 // );
 
+$router->get('exportcsv', 'FIltersController@exportcsv');
+
+$router->get('/csv/download/{id}', 'FIltersController@csvDownload');
 
 
 $router->group(['namespace' => 'Api\V1', 'prefix' => 'v1'], function ($router) {

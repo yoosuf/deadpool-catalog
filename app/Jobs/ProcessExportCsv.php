@@ -1,70 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Jobs;
 
-use App\Exchange;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Http\Transformers\ExchangeLogTransformer;
-use League\Fractal;
-use League\Fractal\Manager;
-use League\Fractal\Resource\Item;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use OzdemirBurak\JsonCsv\File\Json;
-use App\Http\Controllers\FIltersController;
-use Carbon\Carbon;
 use DB;
+//use App\ExchangeLog;
 
 
-class ExchangeLogsController extends Controller
+class ProcessExportCsv extends Job
 {
-    protected $model;
-    private $fractal;
-    private $filter;
-
-
     /**
-     * Create a new controller instance.
+     * Create a new job instance.
      *
-     * @param Exchange $model
+     * @return void
      */
-    public function __construct(Exchange $model)
+    public function __construct()
     {
-        $this->model = $model;
-        $this->fractal = new Manager();
-        $this->filter = new FIltersController();
-
+        //
     }
 
-    public function index($exchangeId, Request $request)
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
     {
-        $limit = $request->has('per_page') ? $request->get('per_page') : 10;
-        $exchange = $this->model->find($exchangeId);
-        $validatedData = $this->validate($request, [
-            'date' => 'date_format:"Y-m-d"',
-            'from' => 'date_format:"Y-m-d"',
-            'to' => 'date_format:"Y-m-d"'
-        ]);
-        $exchangeLogs = $exchange->exchange_logs();
-        if ($request->has('from') AND $request->has('to')) {
-            if($validatedData) {
-                $from = date('Y-m-d H:i:s', strtotime($request->get('from')));
-                $to = date('Y-m-d H:i:s', strtotime($request->get('to')));
-                $historicalData = $exchangeLogs
-                ->whereDate('created_at','>=',  $from)
-                ->whereDate('created_at', '<=', $to);
-            }
-        }
-
-
-        /**
-         * Based on the users request type=csv downloading the data
-         */
-        if ($request->has('type') && $request->get('type') == "csv") {
-
-            // $historicalData = $exchangeLogs->limit($limit)->get();
-
+        echo 'hello';exit;
             $amount = 100;
 
             $finalBuyArr = array();
@@ -72,11 +33,11 @@ class ExchangeLogsController extends Controller
            
 
             $historicalBuyData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(10))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(45))
                     ->get();
 
             $historicalSellData = DB::table("exchange_logs")
-                    ->whereDate('created_at', '>', Carbon::now()->subDays(10))
+                    ->whereDate('created_at', '>', Carbon::now()->subDays(45))
                     ->get();
 
            // print_r($historicalBuyData);exit;
@@ -154,28 +115,13 @@ class ExchangeLogsController extends Controller
           // print_r($finalSellArr);exit;
 
             // Set response headers to trigger file download on client side
-            header("Content-type: application/csv");
-            header("Content-Disposition: attachment;filename=exchange_logs.csv");
 
-            $output_file_pointer = fopen('php://output', 'w');
+            // header('Content-disposition: attachment; filename=file.json');
+            // header('Content-type: application/json');
 
-            // // Output the CSV headers
-            $headers = array(
-                'Timestamp',
-                'Sending exchange',
-                'Receiving Exchange',
-                'Sending currency',
-                'Receiving currency',
-                'Sending crypto',
-                'Receiving crypto',
-                'Sending price',
-                'Receiving price',
-                'Profit'
-            );
-
-            //print_r($finalBuyArr);exit;
-
-            fputcsv($output_file_pointer, $headers);
+            $output = [];
+          
+           // fputcsv($output_file_pointer, $headers);
                 
             foreach ($finalBuyArr as $k1 => $buydata) {
 
@@ -217,24 +163,24 @@ class ExchangeLogsController extends Controller
 
                         $percentage =  ($calculatedVal/$amount)*100;
 
-                        $output = array(
+                        $output[] = array(
 
-                            $buydata['timestamp'],
-                            $buyExchange,
-                            $sellExchange,
-                            $buyCurr,
-                            $selcurr,
-                            $buybase,
-                            $sellbase,
-                            $buydata['price'],
-                            $selldata['price'],
-                            number_format((float)$percentage, 2, '.', '')
+                            'Timestamp'=> $buydata['timestamp'],
+                            'Sending exchange'=> $buyExchange,
+                            'Receiving Exchange'=> $sellExchange,
+                            'Sending currency'=>$buyCurr,
+                            'Receiving currency'=>$selcurr,
+                            'Sending crypto'=>$buybase,
+                            'Receiving crypto'=>$sellbase,
+                            'Sending price'=>$buydata['price'],
+                            'Receiving price'=>$selldata['price'],
+                            'Profit'=>number_format((float)$percentage, 2, '.', '')
                             // $val['created_at']
                         );
                         
-                        fputcsv($output_file_pointer, $output);
-                        ob_flush();
-                        flush();
+                        // fputcsv($output_file_pointer, $output);
+                        // ob_flush();
+                        // flush();
 
                     }
 
@@ -242,30 +188,27 @@ class ExchangeLogsController extends Controller
 
             }
 
-            fclose($output_file_pointer);
-            die;
-        }
-       
+            //fclose($output_file_pointer);
 
-        /**
-         * render as JSON
-         */
-        $historicalData = $exchangeLogs->paginate($limit);
-        $exchanges = $historicalData->getCollection();
-        $resource = new Collection($exchanges, new ExchangeLogTransformer);
-        $resource->setPaginator(new IlluminatePaginatorAdapter($historicalData));
-        return $this->fractal->createData($resource)->toArray();
+           $json = json_encode($output);
+            
+
+
+            echo $json;
+
+            
+
+            // $fp = fopen('results.json', 'w');
+            // fwrite($fp, json_encode($output));
+            // fclose($fp);
+
+            //die;
+       // }
+
     }
 
-    public function show($exchangeId, $logId, Request $request)
+    public function failed(Exception $exception)
     {
-        $exchange = $this->model->find($exchangeId);
-        $historicalData = $exchange->exchange_logs->find($logId);
-        $resource = new Item($historicalData, new ExchangeLogTransformer);
-        return $this->fractal->createData($resource)->toArray();
-
-
-//        $historicalData = $exchange->exchange_logs->find($logId);
-//        return response()->json($historicalData, 200);
+        // Send user notification of failure, etc...
     }
 }
