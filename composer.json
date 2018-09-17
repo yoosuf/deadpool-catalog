@@ -24,7 +24,10 @@
         "php-http/message": "^1.6",
         "spatie/laravel-cors": "^1.2",
         "symfony/polyfill-mbstring": "^1.7",
-        "vlucas/phpdotenv": "~2.2"
+        "vlucas/phpdotenv": "~2.2",
+        "coinbase/coinbase": "~2.0",
+        "ratchet/pawl": "^0.2.3"
+        
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
