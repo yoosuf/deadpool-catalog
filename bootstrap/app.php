@@ -73,14 +73,10 @@ $app->singleton(
 |
 */
 
-$app->configure('cors');
-
 $app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
     Spatie\Cors\Cors::class,
 ]);
-
-
 
 $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
@@ -103,13 +99,7 @@ $app->routeMiddleware([
 // $app->register(App\Providers\EventServiceProvider::class);
 
 $app->configure('graphql');
-
-
-
-
-
-$app->register(Spatie\Cors\CorsServiceProvider::class);
-
+$app->configure('cors');
 $app->configure('api');
 
 

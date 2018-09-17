@@ -60,7 +60,7 @@ class TradeCrypto extends Command
      */
     public function handle()
     {
-
+        
         
     }
 }
