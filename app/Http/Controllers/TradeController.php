@@ -186,7 +186,7 @@ class TradeController extends Controller
 
 
    
-    public function transfer()
+    public function transfer(Request $request)
     {
 
         $liveBuyResult = $this->coinbase->fetch_ticker ('BTC/GBP');
@@ -232,12 +232,15 @@ class TradeController extends Controller
 
     public function getLiveBuyPrice(Request $request)
     {
-        $currncy = $request->get('currency');
-        $exchange = $request->get('exchanges');
-        $crypto = $request->get('crypto');
         $amount = $request->get('amount');
-        $buyprice = $request->get('buyprice');
 
+        $buyCurrncy = $request->get('buy_currency');
+        $buyExchange = $request->get('buy_exchanges');
+        $buyCrypto = $request->get('buy_crypto');
+
+        $sellCurrncy = $request->get('sell_currency');
+        $sellExchange = $request->get('sell_exchanges');
+        $sellCrypto = $request->get('sell_crypto');
 
         //($currency, $amount, $address, $params = array ()) {
 
@@ -246,13 +249,13 @@ class TradeController extends Controller
             'coinbase_account_id' => 'c7675ab9-c77a-406d-9184-4b6d3c44df24'
         ];
 
-        $res = $this->coinbasePro->fetch_order('8d000ee8-cb9e-4f25-a40c-ff8c5a448834');
+        // $res = $this->coinbasePro->fetch_order('8d000ee8-cb9e-4f25-a40c-ff8c5a448834');
        
 
     //    $this->coinbasePro->fetch_balance();
         print_r($res);exit;
 
-        $symbol = $crypto.'/'.$currncy;
+        $symbol = $buyCrypto.'/'.$buyCurrncy;
 
         $tickerRes = $this->coinbasePro->fetch_ticker ($symbol);
 
@@ -261,11 +264,11 @@ class TradeController extends Controller
 
         $liveBuyPrice = $tickerRes['bid']; // this should change according to exchange
 
-        $orderRes = $this->coinbasePro->create_order ($symbol, 'market', 'buy', $liveBuyPrice);
+        $orderRes = $this->coinbasePro->create_order ($symbol, 'market', 'buy', $amount);
        // $orderRes = $this->coinbasePro->create_order ('LTC/USD', 'market', 'sell', 1);
 
 
-    //    print_r($orderRes);exit;
+       print_r($orderRes);exit;
 
         $cryptoCanBuy = $amount/$liveBuyPrice;
 
