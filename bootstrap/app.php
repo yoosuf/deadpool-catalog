@@ -27,7 +27,7 @@ $app->configure('filesystems');
 
 $app->withFacades();
 
-//class_alias('Illuminate\Support\Facades\Storage', 'Storage');
+class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 
 $app->withEloquent();
 
@@ -109,13 +109,13 @@ $app->configure('api');
 
 
 // Load the configuration
-$app->configure('swap');
+// $app->configure('swap');
 
 // Register the service provider
 $app->register(App\Providers\AppServiceProvider::class);
 $app->configure('services');
 
-$app->register(Swap\Laravel\SwapServiceProvider::class);
+// $app->register(Swap\Laravel\SwapServiceProvider::class);
 $app->register(Neoxia\Routing\ResponseFactoryServiceProvider::class);
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 $app->register(Spatie\Cors\CorsServiceProvider::class);
