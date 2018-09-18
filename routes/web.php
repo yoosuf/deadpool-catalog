@@ -42,8 +42,10 @@ $router->get('transfer', 'TradeController@transfer');
 //     }
 // );
 
-$router->get('exportcsv', 'FIltersController@exportcsv');
 $router->post('livePrice', 'TradeController@getLiveData');
+
+$router->get('exportcsv', 'FIltersController@exportcsv');
+
 
 $router->get('/csv/download/{id}', 'FIltersController@csvDownload');
 

@@ -151,9 +151,6 @@ class TradeController extends Controller
         $profitInfo[] = $liveProfitInfo;
 
 
-
-
-
        return response()->json([
 
         'buyinfo' => $buyInfo,
