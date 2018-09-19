@@ -23,18 +23,10 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-$app->configure('filesystems');
-
 $app->withFacades();
-
-class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 
 $app->withEloquent();
 
-// Register the facade
-$app->withFacades(true, [
-    Swap\Laravel\Facades\Swap::class => 'Swap'
-]);
 
 
 /*
@@ -48,7 +40,6 @@ $app->withFacades(true, [
 |
 */
 
-$app->singleton('filesystem', function ($app) { return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem'); });
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
@@ -106,22 +97,15 @@ $app->configure('api');
 
 
 
-
-
-// Load the configuration
-// $app->configure('swap');
-
 // Register the service provider
 $app->register(App\Providers\AppServiceProvider::class);
 $app->configure('services');
 
-// $app->register(Swap\Laravel\SwapServiceProvider::class);
+
 $app->register(Neoxia\Routing\ResponseFactoryServiceProvider::class);
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);
 $app->register(Spatie\Cors\CorsServiceProvider::class);
-$app->register(Illuminate\Mail\MailServiceProvider::class);
-$app->configure('mail');
-//$app->withFacades();
+
 
 
 

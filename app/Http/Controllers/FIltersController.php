@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 //use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
@@ -13,7 +14,7 @@ use GuzzleHttp\Client;
 use Swap\Laravel\Facades\Swap;
 use DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+
 
 
 //use Swap;
