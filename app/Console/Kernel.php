@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         '\App\Console\Commands\ConvertCurrency',
         '\App\Console\Commands\ExportCsv',
         '\App\Console\Commands\TradeCrypto',
+        '\App\Console\Commands\TransactionStatusUpdate',
     ];
 
     /**

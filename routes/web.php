@@ -27,7 +27,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('calculate', 'FIltersController@calculateData');
-$router->get('latestBuy', 'TradeController@getLiveBuyPrice');
+$router->post('latestBuy', 'TradeController@getLiveBuyPrice');
 $router->get('transfer', 'TradeController@transfer');
 
 

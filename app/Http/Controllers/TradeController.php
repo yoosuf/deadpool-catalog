@@ -13,7 +13,7 @@ use Coinbase\Wallet\Resource\Buy;
 use Coinbase\Wallet\Resource\Sell;
 // use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use App\Transaction;
+use App\Trading;
 use DB;
 
 
@@ -37,10 +37,18 @@ class TradeController extends Controller
     public function __construct()
     {
         $this->coinbasePro    = new \ccxt\coinbasepro (array (
-            'apiKey' => 'a9dc9bc86279373db3280e2618c6e07c',
-            'secret' => 'aPMj8Ht+KKdNJlnKsrXe//oe8f/A8f9ynR4cVE2uNZ0fP/VASoW9ngd+GvrxsVR688xnF6EREuxhlLZWyFBDgg==',
-            'password' => 'zs7irctmt5s'
+            'apiKey' => 'c4c58df9658c25c5377db716dd852070',
+            'secret' => 'Uzj7wQUStAq5NvkZ3I+HvBUfNxP2wd11RE1BgE/rnZHe2BUmLkJ9jXqKCv87ndR27+P96HAJLByv/Z0TnpVuXA==',
+            'password' => '1ij971b1z3y'
         ));
+
+        // $this->coinbasePro    = new \ccxt\coinbasepro (array (
+        //     'apiKey' => 'a2f4dae19e5e1f60f15066ab6287a509',
+        //     'secret' => 'IJgnkO6DNwX9cj4P3UnbsZSx6CInvyDHH9g+kb/jQjcpluwiE+3rMB3W1j9d8PRzfWBCDSpzO6psjmHJqrTX+Q==',
+        //     'password' => 'b22etfk1ol'
+        // ));
+
+        $this->coinbasePro->urls['api'] = "https://api-public.sandbox.pro.coinbase.com";
 
         $this->coinbase    = new \ccxt\coinbase (array (
             'apiKey' => '7ZwQTSfbA8MNHa9F',
@@ -59,7 +67,7 @@ class TradeController extends Controller
 
         //$this->apiUrl = 'https://api-public.sandbox.pro.coinbase.com';
 
-        $configuration = Configuration::apiKey('bWU6NbUrQV9wo1ZA', '343753addef296ec2219dfb70ef26c44');
+        $configuration = Configuration::apiKey('76x6uMvSwNUqiw0V', 'QShF7l3vNgRAEUOm6QkxPp4LVEMsKWbQ');
         
        // $configuration->setApiUrl('https://api-public.sandbox.pro.coinbase.com');
 
@@ -108,6 +116,10 @@ class TradeController extends Controller
         $buySymbol = $buyCrypto.'/'.$buyCurrency;
         $liveBuyResult = $this->coinbase->fetch_ticker ($buySymbol);
         $buyLivePrice = $liveBuyResult['info']['buy']['data']['amount'];
+
+        $amount = 1000;
+
+        $cryptoCanBuy = $amount/$buyLivePrice;
     
         // get coinbase sell live price
 
@@ -150,12 +162,14 @@ class TradeController extends Controller
         $profitInfo[] = $oldProfitInfo;
         $profitInfo[] = $liveProfitInfo;
 
+        $response[] = $buyInfo;
+        $response[] = $sellInfo;
 
        return response()->json([
 
-        'buyinfo' => $buyInfo,
-        'sellinfo' => $sellInfo,
-        'profitInfo' => $profitInfo
+        'fiats' => $response,
+        'profitInfo' => $profitInfo,
+        'cryptoCanBuy' => $cryptoCanBuy
        ]);
 
     //    print_r($tickerRes);
@@ -189,13 +203,23 @@ class TradeController extends Controller
     public function transfer(Request $request)
     {
 
-        $liveBuyResult = $this->coinbase->fetch_ticker ('BTC/GBP');
+       // $liveBuyResult = $this->coinbase->fetch_ticker ('BTC/GBP');
+
+       $res = $this->coinbasePro->get_payment_methods();
+
+       print_r($res);
+       exit;
 
 
         $res = $this->client->getCurrentAuthorization();
 
-        print_r($liveBuyResult);exit;
-        // $account = $this->client->getAccount('e2457285-dfed-5fa6-aab4-18b563d9ce1e');
+        // $accounts = $this->client->getAccounts();
+
+        
+        //$account = $this->client->getAccount('e2457285-dfed-5fa6-aab4-18b563d9ce1e');
+
+
+        print_r($res);exit;
 
         // $transactions = $this->client->getAccountTransactions($account);
 
@@ -232,6 +256,9 @@ class TradeController extends Controller
 
     public function getLiveBuyPrice(Request $request)
     {
+
+       print_r($request['latestBuy']);exit;
+
         $amount = $request->get('amount');
 
         $buyCurrncy = $request->get('buy_currency');
@@ -249,46 +276,47 @@ class TradeController extends Controller
             'coinbase_account_id' => 'c7675ab9-c77a-406d-9184-4b6d3c44df24'
         ];
 
-        // $res = $this->coinbasePro->fetch_order('8d000ee8-cb9e-4f25-a40c-ff8c5a448834');
+        // $res = $this->coinbasePro->fetch_order('e589b597-3dda-4afc-a951-0c28620de363');
+       
+        // print_r($res);exit;
+    //    $this->coinbasePro->fetch_balance();
        
 
-    //    $this->coinbasePro->fetch_balance();
-        print_r($res);exit;
-
-        $symbol = $buyCrypto.'/'.$buyCurrncy;
+        $symbol = 'BTC/USD';//$buyCrypto.'/'.$buyCurrncy;
 
         $tickerRes = $this->coinbasePro->fetch_ticker ($symbol);
 
+        $amount = 100;
 
-        // print_r($tickerRes);exit;
-
-        $liveBuyPrice = $tickerRes['bid']; // this should change according to exchange
+        $liveBuyPrice = $tickerRes['ask']; // this should change according to exchange
 
         $orderRes = $this->coinbasePro->create_order ($symbol, 'market', 'buy', $amount);
        // $orderRes = $this->coinbasePro->create_order ('LTC/USD', 'market', 'sell', 1);
 
 
-       print_r($orderRes);exit;
-
-        $cryptoCanBuy = $amount/$liveBuyPrice;
-
         $fee = 1;
 
-        $transaction = new Transaction;
+        if(!empty($orderRes))
+        {
+            $transaction = new Trading;
 
-        $transaction->type = 'buy order';
-        $transaction->from_exchange = $exchange;
-        $transaction->to_exchange = $exchange;
-        $transaction->from_currency = $currncy;
-        $transaction->to_currency = $currncy;
-        $transaction->price = $liveBuyPrice;
-        $transaction->amount = $amount;
-        $transaction->response = json_encode($orderRes);
-        $transaction->status = 2;
+            $transaction->type = 'buy order';
+            $transaction->from_exchange = $buyExchange;
+            $transaction->to_exchange = $sellExchange;
+            $transaction->from_currency = $buyCurrncy;
+            $transaction->to_currency = $sellCurrncy;
+            $transaction->from_crypto = $buyCrypto;
+            $transaction->to_crypto = $sellCrypto;
+            $transaction->start_order_price = $liveBuyPrice;
+            $transaction->end_order_price = '';
+            $transaction->amount = $amount;
+            $transaction->start_response = json_encode($orderRes);
+            $transaction->end_response = '';
+            $transaction->status = 0;
 
-        $transaction->save();
+            $transaction->save();
 
-
+        }
 
         return response()->json([
             // 'fee' => $fee,

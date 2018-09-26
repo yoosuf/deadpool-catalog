@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transaction extends Model
+class Trading extends Model
 {
     /**
      * The table associated with the model.
@@ -18,6 +18,7 @@ class Transaction extends Model
     // ];
 
     protected $casts = [
-        'response' => 'array',
+        'start_response' => 'array',
+        'end_response' => 'array'
     ];
 }
