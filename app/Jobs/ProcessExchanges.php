@@ -107,8 +107,8 @@ class ProcessExchanges extends Job
                             $sellPrice = 0;
                         } else {
                             $cexResult = $cex->fetch_ticker ($crypto.'/'.$value);
-                            $buyPrice = $cexResult['ask'];
-                            $sellPrice = $cexResult['bid'];
+                            $buyPrice = $cexResult['bid'];
+                            $sellPrice = $cexResult['ask'];
                         }
                     }
                     // if($val == 'GDAX')
