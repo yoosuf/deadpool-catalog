@@ -56,7 +56,7 @@ class ProcessExchanges extends Job
         $cryptos = ['BTC', 'ETH', 'LTC'];
 
         $exchangesArr = DB::table('exchanges')
-        ->whereIn('id', [1, 2, 3, 5, 6])
+        ->whereIn('id', [1, 2, 3, 6, 7])
         ->pluck('name', 'id');
 
 
