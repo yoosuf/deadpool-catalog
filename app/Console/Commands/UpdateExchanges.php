@@ -6,7 +6,8 @@ use Illuminate\Console\Command;
 use App\Jobs\ProcessExchanges;
 use Log;
 use DB;
-
+use App\ExchangeLog;
+use ccxt\ccxt;
 
 
 class UpdateExchanges extends Command
@@ -47,5 +48,6 @@ class UpdateExchanges extends Command
         dispatch(new ProcessExchanges());
 
         Log::info("ProcessExchanges Queues Ends");
+
     }
 }

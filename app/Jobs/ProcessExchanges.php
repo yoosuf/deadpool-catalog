@@ -72,7 +72,9 @@ class ProcessExchanges extends Job
 
         // $res = $gdax->fetch_ticker ('BTC/GBP');
 
-        //  print_r($exchangesArr);exit;
+        // $cexResult = $cex->fetch_ticker ('BTC/USD');
+
+        //  print_r($cexResult);exit;
 
         foreach ($exchangesArr as $id => $val)
         {
@@ -157,8 +159,8 @@ class ProcessExchanges extends Job
                         }else
                         {
                             $coinFloorResults = $coinfloor->fetch_ticker ($crypto.'/'.$value);
-                            $buyPrice = $coinFloorResults['ask'];
-                            $sellPrice = $coinFloorResults['bid'];
+                            $buyPrice = $coinFloorResults['bid'];
+                            $sellPrice = $coinFloorResults['ask'];
                         }
 
                     }
@@ -176,8 +178,8 @@ class ProcessExchanges extends Job
                             $quadrigacxResults = $quadrigacx->fetch_ticker ($crypto.'/'.$value);
 
                             // print_r($quadrigacxResults);
-                            $buyPrice = $quadrigacxResults['ask'];
-                            $sellPrice = $quadrigacxResults['bid'];
+                            $buyPrice = $quadrigacxResults['bid'];
+                            $sellPrice = $quadrigacxResults['ask'];
                         }
 
                     }
