@@ -109,8 +109,8 @@ class ProcessExchanges extends Job
                             $sellPrice = 0;
                         } else {
                             $cexResult = $cex->fetch_ticker ($crypto.'/'.$value);
-                            $buyPrice = $cexResult['bid'];
-                            $sellPrice = $cexResult['ask'];
+                            $buyPrice = $cexResult['ask'];
+                            $sellPrice = $cexResult['bid'];
                         }
                     }
                     // if($val == 'GDAX')
@@ -159,8 +159,8 @@ class ProcessExchanges extends Job
                         }else
                         {
                             $coinFloorResults = $coinfloor->fetch_ticker ($crypto.'/'.$value);
-                            $buyPrice = $coinFloorResults['bid'];
-                            $sellPrice = $coinFloorResults['ask'];
+                            $buyPrice = $coinFloorResults['ask'];
+                            $sellPrice = $coinFloorResults['bid'];
                         }
 
                     }
@@ -178,8 +178,8 @@ class ProcessExchanges extends Job
                             $quadrigacxResults = $quadrigacx->fetch_ticker ($crypto.'/'.$value);
 
                             // print_r($quadrigacxResults);
-                            $buyPrice = $quadrigacxResults['bid'];
-                            $sellPrice = $quadrigacxResults['ask'];
+                            $buyPrice = $quadrigacxResults['ask'];
+                            $sellPrice = $quadrigacxResults['bid'];
                         }
 
                     }
