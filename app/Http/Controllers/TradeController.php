@@ -42,6 +42,8 @@ class TradeController extends Controller
             'password' => '1ij971b1z3y'
         ));
 
+        $this->coinfloor = new \ccxt\coinfloor (); 
+
         // $this->coinbasePro    = new \ccxt\coinbasepro (array (
         //     'apiKey' => 'a2f4dae19e5e1f60f15066ab6287a509',
         //     'secret' => 'IJgnkO6DNwX9cj4P3UnbsZSx6CInvyDHH9g+kb/jQjcpluwiE+3rMB3W1j9d8PRzfWBCDSpzO6psjmHJqrTX+Q==',
@@ -203,12 +205,18 @@ class TradeController extends Controller
     public function transfer(Request $request)
     {
 
+
+
        // $liveBuyResult = $this->coinbase->fetch_ticker ('BTC/GBP');
+
+      $res = $this->coinfloor->fetch_ticker('LTC/GBP');
+
+      print_r($res);
+       exit;
 
        $res = $this->coinbasePro->get_payment_methods();
 
-       print_r($res);
-       exit;
+       
 
 
         $res = $this->client->getCurrentAuthorization();

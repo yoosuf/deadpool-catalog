@@ -9,6 +9,8 @@ use ccxt\ccxt;
 
 class ProcessExchanges extends Job
 {
+    public $tries = 3;
+
     /**
      * Create a new job instance.
      *
@@ -16,7 +18,7 @@ class ProcessExchanges extends Job
      */
     public function __construct()
     {
-        //
+        
     }
 
     /**
@@ -249,8 +251,8 @@ class ProcessExchanges extends Job
 
     }
 
-    public function failed(Exception $exception)
-    {
-        // Send user notification of failure, etc...
-    }
+    // public function failed(Exception $exception)
+    // {
+    //     // Send user notification of failure, etc...
+    // }
 }

@@ -48,5 +48,6 @@ class UpdateExchanges extends Command
         dispatch(new ProcessExchanges());
 
         Log::info("ProcessExchanges Queues Ends");
+
     }
 }

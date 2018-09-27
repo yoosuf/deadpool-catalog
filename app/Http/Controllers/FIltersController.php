@@ -69,6 +69,7 @@ class FIltersController extends Controller
         if($exchanges == 'all'){
             $fromExchangeSql = DB::table('exchange_logs')
                         ->latest()
+                        // ->whereIn('exchange_id', [1, 2, 3, 5, 6])
                         ->limit(5)
                         ->get();
         } else {
