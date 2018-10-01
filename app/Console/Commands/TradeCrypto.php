@@ -3,28 +3,44 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Jobs\ProcessExchanges;
+use Illuminate\Http\Response;
+use Carbon\Carbon;
+use ccxt\ccxt;
 use Log;
 use DB;
-use App\ExchangeLog;
-use ccxt\ccxt;
 
 
-class UpdateExchanges extends Command
+class TradeCrypto extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'UpdateExchanges:updateExchanges';
+    protected $signature = 'TradeCrypto:tradeCrypto';
+
+    private $coinbasePro;
+
+    protected $instrument;
+
+    /**
+     * @var
+     */
+    protected $console;
+
+    /**
+     * @var current book
+     */
+    public $book;
+
+    public $params;
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command update exchanges';
+    protected $description = 'Command export csv';
 
     /**
      * Create a new command instance.
@@ -33,6 +49,7 @@ class UpdateExchanges extends Command
      */
     public function __construct()
     {
+        //$this->filter = new FIltersController();
         parent::__construct();
     }
 
@@ -43,11 +60,7 @@ class UpdateExchanges extends Command
      */
     public function handle()
     {
-        Log::info("ProcessExchanges Queues Begins");
-
-        dispatch(new ProcessExchanges());
-
-        Log::info("ProcessExchanges Queues Ends");
-
+        
+        
     }
 }

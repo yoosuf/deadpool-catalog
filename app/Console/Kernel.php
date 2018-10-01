@@ -17,6 +17,8 @@ class Kernel extends ConsoleKernel
         '\App\Console\Commands\UpdateExchanges',
         '\App\Console\Commands\ConvertCurrency',
         '\App\Console\Commands\ExportCsv',
+        '\App\Console\Commands\TradeCrypto',
+        '\App\Console\Commands\TransactionStatusUpdate',
     ];
 
     /**
@@ -33,5 +35,9 @@ class Kernel extends ConsoleKernel
         ->cron('0 0 */2 * *');
         $schedule->command('ConvertCurrency:convertCurrency')
         ->cron('0 */5 * * *');
+        // $schedule->command('TradeCrypto:tradeCrypto')
+        // ->cron('0 */5 * * *');
+    
+        
     }
 }

@@ -9,6 +9,8 @@ use ccxt\ccxt;
 
 class ProcessExchanges extends Job
 {
+    public $tries = 3;
+
     /**
      * Create a new job instance.
      *
@@ -16,7 +18,7 @@ class ProcessExchanges extends Job
      */
     public function __construct()
     {
-        //
+        
     }
 
     /**
@@ -56,7 +58,7 @@ class ProcessExchanges extends Job
         $cryptos = ['BTC', 'ETH', 'LTC'];
 
         $exchangesArr = DB::table('exchanges')
-        ->whereIn('id', [1, 2, 3])
+        ->whereIn('id', [1, 2, 3, 6, 7])
         ->pluck('name', 'id');
 
 
@@ -72,7 +74,9 @@ class ProcessExchanges extends Job
 
         // $res = $gdax->fetch_ticker ('BTC/GBP');
 
-        //  print_r($res);exit;
+        // $cexResult = $cex->fetch_ticker ('BTC/USD');
+
+        //  print_r($cexResult);exit;
 
         foreach ($exchangesArr as $id => $val)
         {
@@ -107,8 +111,8 @@ class ProcessExchanges extends Job
                             $sellPrice = 0;
                         } else {
                             $cexResult = $cex->fetch_ticker ($crypto.'/'.$value);
-                            $buyPrice = $cexResult['bid'];
-                            $sellPrice = $cexResult['ask'];
+                            $buyPrice = $cexResult['ask'];
+                            $sellPrice = $cexResult['bid'];
                         }
                     }
                     // if($val == 'GDAX')
@@ -148,35 +152,39 @@ class ProcessExchanges extends Job
 
                     // }
 
-                    // if($val == 'coinfloor')
-                    // {
-                    //     if($value == 'CAD')
-                    //     {
-                    //         $buyPrice = 0;
-                    //         $sellPrice = 0;
-                    //     }else
-                    //     {
-                    //         $coinFloorResults = $coinfloor->fetch_ticker ('BTC/'.$value);
-                    //         $buyPrice = $coinFloorResults['bid'];
-                    //         $sellPrice = $coinFloorResults['ask'];
-                    //     }
+                    if($val == 'coinfloor')
+                    {
+                        if($value == 'CAD' || $crypto != 'BTC')
+                        {
+                            $buyPrice = 0;
+                            $sellPrice = 0;
+                        }else
+                        {
+                            $coinFloorResults = $coinfloor->fetch_ticker ($crypto.'/'.$value);
+                            $buyPrice = $coinFloorResults['ask'];
+                            $sellPrice = $coinFloorResults['bid'];
+                        }
 
-                    // }
+                    }
+                    // echo $val;
 
-                    // if($val == 'QuadrigaCX')
-                    // {
-                    //     if($value == 'GBP')
-                    //     {
-                    //         $buyPrice = 0;
-                    //         $sellPrice = 0;
-                    //     }else
-                    //     {
-                    //         $quadrigacxResults = $quadrigacx->fetch_ticker ('BTC/'.$value);
-                    //         $buyPrice = $quadrigacxResults['bid'];
-                    //         $sellPrice = $quadrigacxResults['ask'];
-                    //     }
+                    if($val == 'QuadrigaCX')
+                    {
+                        
+                        if($value == 'GBP' || ($value == 'USD' && $crypto != 'BTC'))
+                        {
+                            $buyPrice = 0;
+                            $sellPrice = 0;
+                        }else
+                        {
+                            $quadrigacxResults = $quadrigacx->fetch_ticker ($crypto.'/'.$value);
 
-                    // }
+                            // print_r($quadrigacxResults);
+                            $buyPrice = $quadrigacxResults['ask'];
+                            $sellPrice = $quadrigacxResults['bid'];
+                        }
+
+                    }
 
                     // if($val == 'acx')
                     // {
@@ -226,7 +234,8 @@ class ProcessExchanges extends Job
                 'rates' => $exchanges
             );
 
-            //print_r($exchangesfinal);
+
+            // print_r($exchangesfinal);
 
             $encodeExchanges = $exchangesfinal;
 
@@ -235,14 +244,15 @@ class ProcessExchanges extends Job
                 'preference' => $encodeExchanges
                 
             ];
+
             $newData = ExchangeLog::create($data);
 
         }
 
     }
 
-    public function failed(Exception $exception)
-    {
-        // Send user notification of failure, etc...
-    }
+    // public function failed(Exception $exception)
+    // {
+    //     // Send user notification of failure, etc...
+    // }
 }

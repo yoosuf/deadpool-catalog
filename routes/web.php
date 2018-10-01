@@ -27,6 +27,8 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('calculate', 'FIltersController@calculateData');
+$router->post('latestBuy', 'TradeController@getLiveBuyPrice');
+$router->get('transfer', 'TradeController@transfer');
 
 
 
@@ -40,7 +42,10 @@ $router->get('calculate', 'FIltersController@calculateData');
 //     }
 // );
 
+$router->post('livePrice', 'TradeController@getLiveData');
+
 $router->get('exportcsv', 'FIltersController@exportcsv');
+
 
 $router->get('/csv/download/{id}', 'FIltersController@csvDownload');
 

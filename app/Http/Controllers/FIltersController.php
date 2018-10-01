@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 //use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
@@ -13,7 +14,7 @@ use GuzzleHttp\Client;
 use Swap\Laravel\Facades\Swap;
 use DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+
 
 
 //use Swap;
@@ -68,7 +69,8 @@ class FIltersController extends Controller
         if($exchanges == 'all'){
             $fromExchangeSql = DB::table('exchange_logs')
                         ->latest()
-                        ->limit(3)
+                        // ->whereIn('exchange_id', [1, 2, 3, 5, 6])
+                        ->limit(5)
                         ->get();
         } else {
             $exchangesArr = explode(',',$exchanges);
@@ -371,13 +373,13 @@ class FIltersController extends Controller
             ->limit(12)
             ->get();
 
-        //print_r($sellExchange);exit;
+        
 
          $resBuyData = $this->fillBuyData($buyData, $buyCurr, $baseBuy);
 
          $resSellData = $this->fillSellData($sellData, $currSell, $baseSell);
 
-        
+        //  print_r($resSellData);
         
 
          $percentArr = array();
@@ -481,7 +483,7 @@ class FIltersController extends Controller
         $trimedSellArr = $this->purifyArray($finalSellArr);
 
 
-        // print_r($trimedBuyArr);exit;
+        // print_r($trimedSellArr);exit;
 
         // get currency layer data
         $currency_layer = $this->getCurrencyLayerData();
@@ -514,7 +516,7 @@ class FIltersController extends Controller
                     $rate = $ratesArr->data->$keystr;
 
                     //retrive data for graphs
-                    $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee, $hasProfit);
+                   $graphData = $this->getGraphData($buyExchange,$sellExchange,$buybase,$sellbase,$buyCurr,$selcurr, $rate, $withFee, $hasProfit);
                     
                     $val = (floatval($amount) / floatval($trimedBuyArr[$i]['price'])) * floatval($trimedSellArr[$x]['price']);
                     $convertedVal = $val/$rate;
